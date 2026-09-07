@@ -1,15 +1,10 @@
 import Image from "next/image";
-import { redirect } from "next/navigation";
-import { LockKey, SignIn } from "@phosphor-icons/react/dist/ssr";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { LockKey } from "@phosphor-icons/react/dist/ssr";
 import { login } from "./actions";
 import Link from "next/link";
+import { SubmitButton } from "@/components/submit-button";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) redirect("/");
-
   const { error } = await searchParams;
 
   return <main className="login-page">
@@ -22,7 +17,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <label htmlFor="password">Password</label>
         <input id="password" name="password" type="password" autoComplete="current-password" required minLength={6} />
         {error && <p className="form-error" role="alert">{error}</p>}
-        <button type="submit"><SignIn size={18} weight="bold" />Masuk</button>
+        <SubmitButton idle="Masuk" pending="Memeriksa akun..." icon />
       </form>
       <Link className="forgot-link" href="/forgot-password">Lupa password?</Link>
       <p className="login-help">Hubungi Super Admin jika belum memiliki akses.</p>

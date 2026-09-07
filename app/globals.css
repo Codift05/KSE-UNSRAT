@@ -110,6 +110,7 @@ main { margin-left: 244px; min-width: 0; }
 .login-card input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(23,107,77,.14); }
 .login-card form button { align-items: center; background: var(--accent); border: 1px solid var(--accent); border-radius: 8px; color: white; cursor: pointer; display: flex; font-weight: 700; gap: 8px; justify-content: center; margin-top: 10px; min-height: 42px; }
 .login-card form button:active { transform: translateY(1px); }
+.login-card form button:disabled { cursor: wait; opacity: .72; }
 .form-error { background: #f8ece9; border-radius: 8px; color: var(--danger); font-size: 12px; margin: 4px 0 0; padding: 10px 12px; }
 .form-success { background: var(--accent-soft); border-radius: 8px; color: var(--accent); font-size: 12px; line-height: 1.5; padding: 12px; }
 .forgot-link { color: var(--accent); display: block; font-size: 12px; font-weight: 650; margin-top: 16px; text-align: center; }

@@ -24,7 +24,7 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Dashboard | UI siap | Belum membaca data Supabase |
 | Dokumen | UI siap | Monitoring, tabel, filter, dan folder Drive masih data demo |
 | Supabase | Terhubung | Server SDK dan health endpoint tersedia |
-| Authentication | Implementasi siap | Login, reset password, session refresh, route protection, dan logout; perlu akun Supabase untuk uji penuh |
+| Authentication | Selesai | Login, reset password, session refresh, proteksi terpusat, dan logout |
 | Database schema dan RLS | Migration siap | Dua migration tersedia dan belum diterapkan |
 | Role dan permission | Migration siap | Menunggu migration dan integrasi UI |
 | Periode, anggota, struktur, divisi | UI + migration siap | Menunggu migration dan integrasi CRUD |
@@ -158,6 +158,7 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-07 | Phosphor Icons sebagai satu-satunya keluarga icon | Konsistensi visual |
 | 2026-09-07 | Supabase service-role hanya pada server | Mencegah privilege admin bocor ke browser |
 | 2026-09-07 | Google Drive untuk file, Supabase untuk metadata | Sesuai batas free tier dan PRD |
+| 2026-09-07 | Verifikasi session hanya di Proxy | Menghindari request auth berulang pada setiap navigasi |
 
 ## Langkah berikutnya
 

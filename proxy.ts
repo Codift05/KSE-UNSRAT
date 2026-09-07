@@ -18,7 +18,18 @@ export async function proxy(request: NextRequest) {
     },
   );
 
-  await supabase.auth.getUser();
+  const { data } = await supabase.auth.getClaims();
+  const pathname = request.nextUrl.pathname;
+  const publicRoute = pathname === "/login" || pathname === "/forgot-password" || pathname.startsWith("/auth/") || pathname.startsWith("/api/health/");
+
+  if (!data?.claims && !publicRoute) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  if (data?.claims && (pathname === "/login" || pathname === "/forgot-password")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   return response;
 }
 
