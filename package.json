@@ -12,7 +12,9 @@
     "@phosphor-icons/react": "latest",
     "@supabase/ssr": "^0.12.6",
     "@supabase/supabase-js": "^2.115.0",
+    "geist": "^1.7.2",
     "next": "latest",
+    "nextjs-toploader": "^3.9.17",
     "react": "latest",
     "react-dom": "latest"
   },

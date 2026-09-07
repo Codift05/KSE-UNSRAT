@@ -8,4 +8,6 @@ Sebelum mengubah kode:
 4. Kerjakan satu vertical slice sampai berfungsi sebelum membuka modul berikutnya.
 5. Jalankan `npm run lint` dan `npm run build` sebelum menyatakan selesai.
 
+Tempatkan UI di `src/frontend`, akses data dan integrasi server di `src/backend`, serta route tipis di `src/app`.
+
 Jangan memasukkan secret ke source code. `SUPABASE_SERVICE_ROLE_KEY` hanya boleh digunakan pada server.

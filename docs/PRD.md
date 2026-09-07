@@ -226,6 +226,14 @@ Settings
 
 Beberapa menu seperti Attendance, Letters, Finance, dan Analytics dapat dikembangkan secara bertahap setelah MVP utama selesai.
 
+## 7.1 Kehadiran dan rekap poin beswan
+
+Menu Kehadiran menjadi pusat pencatatan partisipasi beswan pada kegiatan. Kegiatan offline memberi 20 poin dan kegiatan online memberi 10 poin untuk kehadiran penuh. Kehadiran sebagian karena harus kembali kuliah atau alasan wajar lain memperoleh 50% poin. Status Terlambat dicatat terpisah dan tetap memperoleh poin penuh sampai organisasi menetapkan aturan potongan. Izin mendapat 0 poin, sedangkan Alpa mengikuti pengurangan poin kegiatan.
+
+Pengurus dapat mencatat status Hadir, Terlambat, Hadir sebagian, Izin, Alpa, atau Belum dicatat untuk setiap beswan. Status Izin dapat menyertakan tautan surat atau bukti izin. Sistem menyimpan poin yang diberikan pada saat pencatatan sebagai histori tetap.
+
+Rekap periode menampilkan total poin dan jumlah setiap status per beswan. Nama beswan membuka rincian kegiatan yang menjelaskan tanggal, pelaksanaan, status, poin, dan bukti izin. Tautan rincian dapat dibagikan, tetapi beswan wajib login dan hanya dapat melihat datanya sendiri. Pengurus dengan permission kehadiran dapat melihat seluruh rincian. Spreadsheet lama dapat diimpor pada tahap migrasi setelah pemetaan nama beswan dan kegiatan diverifikasi.
+
 ---
 
 # 8. Functional Requirements

@@ -25,13 +25,15 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Dokumen | UI siap | Monitoring, tabel, filter, dan folder Drive masih data demo |
 | Supabase | Terhubung | Server SDK dan health endpoint tersedia |
 | Authentication | Selesai | Login, reset password, session refresh, proteksi terpusat, dan logout |
-| Database schema dan RLS | Migration siap | Dua migration tersedia dan belum diterapkan |
+| Profil pengguna | Selesai | Menu akun dan edit data profil mandiri tersedia |
+| Database schema dan RLS | Migration siap | Empat migration tersedia dan belum diterapkan |
 | Role dan permission | Migration siap | Menunggu migration dan integrasi UI |
 | Periode, anggota, struktur, divisi | UI + migration siap | Menunggu migration dan integrasi CRUD |
 | Agenda dan activity log | UI + migration siap | Menunggu migration dan integrasi CRUD |
 | Program dan tugas | UI + migration siap | Menunggu migration dan integrasi CRUD |
 | Google Drive | Belum | Memerlukan credential Google server-side |
 | Inventaris dan peminjaman | UI + migration siap | Menunggu migration dan integrasi CRUD |
+| Kehadiran dan rekap poin | Implementasi siap | Input, rekap, rincian beswan privat, riwayat, activity log, dan fallback schema tersedia |
 
 ## Urutan implementasi
 
@@ -61,7 +63,17 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 
 ### Setelah P0 stabil
 
-Program evaluation, reporting dasar, attendance, finance, letters, analytics, notification, dan fitur P3.
+Program evaluation, reporting dasar, finance, letters, analytics, notification, dan fitur P3.
+
+### Kehadiran dan poin
+
+1. Kegiatan offline bernilai 20 poin dan online 10 poin untuk kehadiran penuh.
+2. Hadir sebagian bernilai 50%, Terlambat sementara bernilai penuh, Izin 0, dan Alpa mengikuti pengurangan kegiatan.
+3. Pengurus mencatat satu status untuk setiap beswan pada satu kegiatan.
+4. Poin hasil pencatatan disimpan sebagai snapshot agar histori tidak berubah jika aturan kegiatan diedit.
+5. Rekap menampilkan total poin dan jumlah setiap status per beswan dalam periode aktif.
+6. Surat izin disimpan sebagai URL bukti. Verifikasi berkas dapat ditambahkan setelah alur dasar stabil.
+7. CSV lama menjadi sumber migrasi, bukan bentuk utama antarmuka harian.
 
 ## Arsitektur aktif
 
@@ -83,15 +95,15 @@ Aturan batas:
 ## Struktur kode
 
 ```text
-app/                     routes dan API
-components/              komponen UI bersama
-lib/supabase/            client Supabase server-side
+src/app/                  route, layout, API, dan Server Actions
+src/frontend/components/ komponen dan interaksi antarmuka
+src/backend/             query, auth helper, dan akses Supabase
+supabase/migrations/     schema PostgreSQL dan RLS
 public/                  aset statis dan logo resmi
-docs/PRD.md              kebutuhan produk lengkap
-docs/PROJECT.md          arah, status, dan keputusan implementasi
+docs/                    PRD, status, dan keputusan implementasi
 ```
 
-Feature folder baru ditambahkan hanya ketika modul pertama benar-benar diimplementasikan. Hindari scaffold kosong.
+`src/app` hanya menjadi lapisan routing dan composition. Logika tampilan berada di `src/frontend`, sedangkan akses data serta credential server berada di `src/backend`.
 
 ## Sistem visual
 
@@ -100,12 +112,22 @@ Feature folder baru ditambahkan hanya ketika modul pertama benar-benar diimpleme
 - Warna utama: hijau KSE `#176b4d`, neutral background `#f5f7f6`.
 - Satu accent color. Status bahaya dan peringatan hanya untuk makna semantik.
 - Radius utama `12px`; kontrol menggunakan `8px` sampai `9px`.
-- Font saat ini menggunakan system sans-serif untuk performa dan tanpa request jaringan.
+- Font utama menggunakan Geist dari package lokal agar konsisten di development dan Vercel tanpa request font eksternal dari browser.
+- Halaman autentikasi memakai komposisi editorial: identitas dan konteks di kiri, form fokus di kanan, serta latar gelombang mint–biru es yang tetap memakai hijau KSE sebagai accent utama.
+- Latar autentikasi berada di `public/kse-auth-background.png`; logo transparan berada di `public/pskse-logo-transparent.png`. Aset latar tidak memuat teks atau logo sehingga copy tetap berupa HTML yang aksesibel dan responsif.
+- Navigasi antarrute memakai progress bar tipis global dari `nextjs-toploader`; halaman aktif tetap terlihat sampai rute berikutnya siap sehingga shell tidak berkedip atau berubah menjadi skeleton penuh.
 - Gunakan Phosphor Icons saja. Jangan membuat SVG icon manual.
 - Gunakan card hanya untuk grouping data yang nyata.
 - Semua halaman harus responsif pada 430px, 760px, dan desktop.
 - Semua kontrol harus memiliki focus state, label, contrast yang terbaca, serta target sentuh yang layak.
 - Motion hanya untuk feedback perubahan state. Hormati `prefers-reduced-motion`.
+- Jangan memakai eyebrow dekoratif, micro-label kapital, atau letter-spacing lebar untuk membangun hierarki. Gunakan judul yang jelas, bobot font, dan ruang.
+- Header tabel dan judul kelompok navigasi memakai sentence case; uppercase hanya untuk singkatan resmi seperti KSE, LPJ, atau SK.
+- Panel autentikasi memakai permukaan putih solid, border tunggal, dan tanpa glow atau decorative icon. Field aktif ditandai border abu-abu netral tanpa warna accent atau glow.
+- Pada mobile, autentikasi memprioritaskan form: hero copy disembunyikan, logo dipadatkan, kartu dibatasi 330-340px, safe-area dihormati, dan input memakai ukuran 16px untuk mencegah zoom otomatis iOS.
+- Skala tipografi aplikasi dibatasi: 11px metadata/status, 12px keterangan, 13-14px isi, 15px judul panel, 27-30px judul halaman desktop, dan 22px pada mobile. Bobot utama hanya 500, 600, dan 700.
+- Logo sidebar dibatasi 110px agar identitas organisasi tidak mengalahkan navigasi dan konten.
+- Dashboard mobile memakai KPI 2x2, action satu baris, dan gap panel 14-16px. KPI hanya kembali satu kolom pada viewport di bawah 340px.
 
 ## Route aktif
 
@@ -124,6 +146,9 @@ Feature folder baru ditambahkan hanya ketika modul pertama benar-benar diimpleme
 | `/tasks` | Tugas pengguna |
 | `/calendar` | Agenda organisasi |
 | `/inventory` | Inventaris dan peminjaman |
+| `/attendance` | Pencatatan kehadiran dan rekap poin beswan |
+| `/points/[memberId]` | Rincian sumber poin yang dapat dibagikan secara privat |
+| `/profile` | Pengaturan profil pengguna aktif |
 | `/activity` | Log aktivitas |
 | `/settings` | Konfigurasi sistem |
 | `/api/health/supabase` | Pemeriksaan koneksi Supabase server-side |
@@ -135,6 +160,7 @@ Gunakan `.env.local` berdasarkan `.env.example`:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=
 SUPABASE_SERVICE_ROLE_KEY=
+AUTH_MIFTAH_EMAIL=
 ```
 
 Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat harus di-rotate sebelum deployment.
@@ -159,7 +185,12 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-07 | Supabase service-role hanya pada server | Mencegah privilege admin bocor ke browser |
 | 2026-09-07 | Google Drive untuk file, Supabase untuk metadata | Sesuai batas free tier dan PRD |
 | 2026-09-07 | Verifikasi session hanya di Proxy | Menghindari request auth berulang pada setiap navigasi |
+| 2026-09-07 | Pertahankan Next.js dan gunakan Link prefetch | Bottleneck berada pada jaringan Supabase, bukan rendering framework |
+| 2026-09-07 | Geist dan visual autentikasi soft-tech KSE | Memodernkan tipografi serta login tanpa mengubah alur Supabase atau identitas organisasi |
+| 2026-09-07 | Top loader global menggantikan root skeleton | Menjaga konteks halaman saat navigasi dan menghindari redraw sidebar, tabel, serta pagination palsu |
+| 2026-09-07 | Poin kehadiran dikonfigurasi per kegiatan dan disimpan sebagai snapshot | Nilai kegiatan pada spreadsheet lama berbeda-beda dan histori tidak boleh berubah secara retroaktif |
+| 2026-09-07 | Nama profil dikirim bersama render server | Menghapus identitas demo dan perubahan teks sesaat ketika halaman dimuat ulang |
 
 ## Langkah berikutnya
 
-Terapkan kedua file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase atau berikan database password untuk menjalankannya dari CLI. Setelah itu buat akun Super Admin, hubungkan seluruh tabel UI ke query Supabase, dan konfigurasi Google Drive.
+Terapkan keempat file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase atau berikan database password untuk menjalankannya dari CLI. Setelah itu hubungkan CRUD modul inti, siapkan pemetaan CSV ke anggota, dan konfigurasi Google Drive.
