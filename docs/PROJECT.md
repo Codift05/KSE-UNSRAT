@@ -21,7 +21,7 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | --- | --- | --- |
 | Fondasi Next.js dan TypeScript | Selesai | Next.js App Router, build produksi lulus |
 | Shell dan navigasi responsif | Selesai | Desktop dan mobile sidebar |
-| Dashboard | UI siap | Belum membaca data Supabase |
+| Dashboard | Implementasi siap | Metrik, progress program dari tugas selesai, agenda, aktivitas terbaru, dan panel perhatian dibaca dari Supabase |
 | Dokumen | UI siap | Monitoring, tabel, filter, dan folder Drive masih data demo |
 | Supabase | Terhubung | Server SDK dan health endpoint tersedia |
 | Authentication | Selesai | Login, reset password, session refresh, proteksi terpusat, dan logout |
@@ -211,7 +211,8 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-09 | Penetapan divisi hanya mengganti penugasan pada periode aktif | Histori divisi periode sebelumnya harus tetap utuh untuk rekap dan laporan |
 | 2026-09-09 | Satu anggota menempati satu divisi per periode, diatur satu tempat di `division-assignment.ts` | Halaman Anggota dan halaman Divisi sama-sama mengubah penugasan, sehingga aturannya tidak boleh digandakan |
 | 2026-09-09 | Halaman modul memeriksa permission sendiri sebelum memuat data | Tabel generik `/[section]` sebelumnya membaca Supabase tanpa pemeriksaan izin |
+| 2026-09-09 | Tanggal, jam sapaan, dan batas keterlambatan memakai zona `Asia/Makassar` | Server berjalan di UTC sedangkan Manado di WITA, sehingga tanggal dapat bergeser sehari dan sapaan salah waktu |
 
 ## Langkah berikutnya
 
-Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Berikutnya isi `role_permissions` untuk role selain Super Admin agar halaman organisasi terbuka bagi pengurus, rekam `attendance.view` dan `attendance.manage` sebagai migration karena keduanya baru ada di database dan belum di repo, lanjutkan ke Operations (program, tugas, agenda) dan dashboard yang membaca agregasi nyata, lalu siapkan pemetaan CSV ke anggota dan konfigurasi Google Drive.
+Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Dashboard sudah membaca agregasi nyata dan `attendance.view` serta `attendance.manage` sudah terekam sebagai migration. Berikutnya isi `role_permissions` untuk role selain Super Admin agar halaman organisasi terbuka bagi pengurus, lanjutkan ke Operations (program, tugas, agenda, inventaris) yang masih memakai tabel demo generik, lalu siapkan pemetaan CSV ke anggota dan konfigurasi Google Drive.

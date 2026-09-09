@@ -1,0 +1,28 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { greetingForHour, initialsOf, relativeTimeLabel } from "./time-format.ts";
+
+test("memilih sapaan sesuai jam WITA", () => {
+  assert.equal(greetingForHour(0), "Selamat malam");
+  assert.equal(greetingForHour(5), "Selamat pagi");
+  assert.equal(greetingForHour(11), "Selamat siang");
+  assert.equal(greetingForHour(15), "Selamat sore");
+  assert.equal(greetingForHour(19), "Selamat malam");
+});
+
+test("menyusun label waktu relatif", () => {
+  const now = new Date("2026-09-09T12:00:00Z");
+  const ago = (seconds: number) => new Date(now.getTime() - seconds * 1000).toISOString();
+  assert.equal(relativeTimeLabel(ago(30), now), "Baru saja");
+  assert.equal(relativeTimeLabel(ago(600), now), "10 menit lalu");
+  assert.equal(relativeTimeLabel(ago(7200), now), "2 jam lalu");
+  assert.equal(relativeTimeLabel(ago(172800), now), "2 hari lalu");
+  assert.match(relativeTimeLabel(ago(2592000), now), /Agu 2026/);
+});
+
+test("mengambil inisial dari nama", () => {
+  assert.equal(initialsOf("Miftahuddin S. Arsyad"), "MS");
+  assert.equal(initialsOf("Ezra"), "E");
+  assert.equal(initialsOf("  vinny   moningka "), "VM");
+  assert.equal(initialsOf(""), "?");
+});

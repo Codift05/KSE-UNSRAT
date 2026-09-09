@@ -39,17 +39,7 @@ const navGroups = [
   { label: "Sistem", items: [["Akun", "/accounts", User], ["Pengaturan", "/settings", Gear]] },
 ] as const;
 
-const programs = [
-  { name: "KSE Mengajar", division: "Community Development", progress: 82, due: "18 Sep", status: "Berjalan" },
-  { name: "Sharing Session", division: "Education", progress: 64, due: "24 Sep", status: "Berjalan" },
-  { name: "Welcoming Scholars", division: "Internal Development", progress: 35, due: "2 Okt", status: "Perencanaan" },
-];
 
-const agenda = [
-  { day: "08", month: "Sep", title: "Rapat Pengurus", meta: "19.00 · Sekretariat" },
-  { day: "12", month: "Sep", title: "Sharing Session", meta: "15.30 · Aula FEB" },
-  { day: "18", month: "Sep", title: "KSE Mengajar", meta: "09.00 · SD Inpres Malalayang" },
-];
 
 export function DashboardShell({ accountName, moduleRows, dashboard, documentRows, content }: { accountName: string; moduleRows?: string[][]; dashboard?: DashboardData; documentRows?: DocumentRow[]; content?: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -95,9 +85,9 @@ export function DashboardShell({ accountName, moduleRows, dashboard, documentRow
 
         {content ?? (isDocuments ? <DocumentsView rows={documentRows} /> : pathname !== "/" ? <ModuleView path={pathname} rows={moduleRows} /> : <div className="content">
           <section className="page-heading">
-            <div><p>Senin, 7 September 2026</p><h1>Selamat pagi{firstName ? `, ${firstName}` : ""}.</h1><span>Berikut ringkasan organisasi hari ini.</span></div>
+            <div><p>{dashboard?.todayLabel ?? ""}</p><h1>{dashboard?.greeting ?? "Halo"}{firstName ? `, ${firstName}` : ""}.</h1><span>Berikut ringkasan organisasi hari ini.</span></div>
             <div className="heading-actions">
-              <button className="period-button"><CalendarBlank size={18} />Periode 2026-2027<CaretDown size={14} /></button>
+              <Link className="period-button" href="/periods"><CalendarBlank size={18} />{dashboard?.periodName ?? "Periode"}<CaretDown size={14} /></Link>
               <button className="primary-button"><Plus size={18} weight="bold" />Program baru</button>
             </div>
           </section>
@@ -113,36 +103,38 @@ export function DashboardShell({ accountName, moduleRows, dashboard, documentRow
             <div className="panel programs-panel">
               <div className="panel-heading"><div><h2>Progress program</h2><p>Program aktif periode ini</p></div><button>Lihat semua</button></div>
               <div className="program-list">
-                {programs.map((program) => (
-                  <article className="program-row" key={program.name}>
+                {dashboard?.programs.map((program) => (
+                  <article className="program-row" key={program.id}>
                     <div className="program-icon"><ArchiveBox size={20} /></div>
                     <div className="program-copy"><strong>{program.name}</strong><span>{program.division}</span></div>
                     <div className="progress-cell"><div><span>Progress</span><strong>{program.progress}%</strong></div><div className="progress-track"><i style={{ width: `${program.progress}%` }} /></div></div>
                     <div className="due"><span><Clock size={14} />{program.due}</span><em>{program.status}</em></div>
                   </article>
                 ))}
+                {!dashboard?.programs.length && <div className="empty-state"><span><ArchiveBox size={21} /></span><div><strong>Belum ada program aktif</strong><p>Progress dihitung otomatis dari tugas yang selesai.</p></div></div>}
               </div>
             </div>
 
             <div className="panel attention-panel">
               <div className="panel-heading"><div><h2>Perlu perhatian</h2><p>Tindakan yang menunggumu</p></div></div>
-              <div className="attention-item"><span className="attention-icon"><Clock size={19} /></span><div><strong>3 tugas terlambat</strong><p>Lewati tenggat dan belum selesai</p></div><b>3</b></div>
-              <div className="attention-item"><span className="attention-icon"><ChartLineUp size={19} /></span><div><strong>1 program mendekati tenggat</strong><p>Selesai dalam 7 hari</p></div><b>1</b></div>
-              <div className="attention-item"><span className="attention-icon"><Cube size={19} /></span><div><strong>2 inventaris terlambat</strong><p>Belum dikembalikan</p></div><b>2</b></div>
+              {!!dashboard?.overdueTasks && <div className="attention-item"><span className="attention-icon"><Clock size={19} /></span><div><strong>{dashboard.overdueTasks} tugas terlambat</strong><p>Lewati tenggat dan belum selesai</p></div><b>{dashboard.overdueTasks}</b></div>}
+              {!!dashboard?.programsDueSoon && <div className="attention-item"><span className="attention-icon"><ChartLineUp size={19} /></span><div><strong>{dashboard.programsDueSoon} program mendekati tenggat</strong><p>Selesai dalam 7 hari</p></div><b>{dashboard.programsDueSoon}</b></div>}
+              {!!dashboard?.overdueInventory && <div className="attention-item"><span className="attention-icon"><Cube size={19} /></span><div><strong>{dashboard.overdueInventory} inventaris terlambat</strong><p>Belum dikembalikan</p></div><b>{dashboard.overdueInventory}</b></div>}
+              {!dashboard?.overdueTasks && !dashboard?.programsDueSoon && !dashboard?.overdueInventory && <div className="empty-state"><span><CheckCircle size={21} /></span><div><strong>Tidak ada yang perlu perhatian</strong><p>Semua tenggat dan peminjaman masih aman.</p></div></div>}
             </div>
 
             <div className="panel agenda-panel">
               <div className="panel-heading"><div><h2>Agenda terdekat</h2><p>Jadwal organisasi berikutnya</p></div><button>Buka kalender</button></div>
               <div className="agenda-list">
-                {agenda.map((item) => <article key={item.title}><div className="date-box"><strong>{item.day}</strong><span>{item.month}</span></div><div><strong>{item.title}</strong><p>{item.meta}</p></div></article>)}
+                {dashboard?.agenda.map((item) => <article key={item.id}><div className="date-box"><strong>{item.day}</strong><span>{item.month}</span></div><div><strong>{item.title}</strong><p>{item.meta}</p></div></article>)}
+                {!dashboard?.agenda.length && <div className="empty-state"><span><CalendarBlank size={21} /></span><div><strong>Belum ada agenda</strong><p>Kegiatan yang akan datang muncul di sini.</p></div></div>}
               </div>
             </div>
 
             <div className="panel activity-panel">
               <div className="panel-heading"><div><h2>Aktivitas terbaru</h2><p>Pembaruan dari tim</p></div><button>Lihat log</button></div>
-              <Activity initials="EM" name="Ezra Mandagi" text="mengubah status KSE Mengajar menjadi Berjalan" time="10 menit lalu" />
-              <Activity initials="VM" name="Vinny Moningka" text="mengunggah LPJ Sharing Session" time="45 menit lalu" />
-              <Activity initials="MS" name="Miftah S." text="menambahkan anggota baru ke divisi Education" time="2 jam lalu" />
+              {dashboard?.activity.map((item) => <Activity initials={item.initials} name={item.name} text={item.text} time={item.time} key={item.id} />)}
+              {!dashboard?.activity.length && <div className="empty-state"><span><List size={21} /></span><div><strong>Belum ada aktivitas</strong><p>Perubahan penting pada sistem tercatat di sini.</p></div></div>}
             </div>
           </section>
         </div>)}
