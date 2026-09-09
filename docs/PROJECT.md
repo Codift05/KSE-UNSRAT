@@ -26,9 +26,13 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Supabase | Terhubung | Server SDK dan health endpoint tersedia |
 | Authentication | Selesai | Login, reset password, session refresh, proteksi terpusat, dan logout |
 | Profil pengguna | Selesai | Menu akun dan edit data profil mandiri tersedia |
-| Database schema dan RLS | Migration siap | Empat migration tersedia dan belum diterapkan |
+| Manajemen akun | Implementasi siap | Super Admin dapat membuat, menonaktifkan, reset password, dan menghapus akun Supabase |
+| Database schema dan RLS | Migration siap | Tujuh migration tersedia; status penerapan perlu dicek di Supabase |
 | Role dan permission | Migration siap | Menunggu migration dan integrasi UI |
-| Periode, anggota, struktur, divisi | UI + migration siap | Menunggu migration dan integrasi CRUD |
+| Periode | Implementasi siap | CRUD, aktivasi satu periode via `set_active_period`, arsip, dan hapus dengan penjagaan |
+| Anggota | Implementasi siap | Edit data, status anggota, dan penetapan divisi periode aktif; pembuatan anggota lewat halaman Akun |
+| Divisi | Implementasi siap | CRUD divisi periode aktif, koordinator, dan kelola anggota dari dua sisi |
+| Struktur kepengurusan | UI + migration siap | Menunggu integrasi CRUD |
 | Agenda dan activity log | UI + migration siap | Menunggu migration dan integrasi CRUD |
 | Program dan tugas | UI + migration siap | Menunggu migration dan integrasi CRUD |
 | Google Drive | Belum | Memerlukan credential Google server-side |
@@ -74,6 +78,14 @@ Program evaluation, reporting dasar, finance, letters, analytics, notification, 
 5. Rekap menampilkan total poin dan jumlah setiap status per beswan dalam periode aktif.
 6. Surat izin disimpan sebagai URL bukti. Verifikasi berkas dapat ditambahkan setelah alur dasar stabil.
 7. CSV lama menjadi sumber migrasi, bukan bentuk utama antarmuka harian.
+8. Rekap diurutkan menjadi peringkat poin. Keaktifan memakai rasio hadir, terlambat, dan hadir sebagian terhadap catatan non-izin.
+9. Peringatan disiplin otomatis: SP1 pada 3–5 alpa, SP2 pada 6–7 alpa, dan SP3 mulai 8 alpa.
+10. Status anggota tetap ditampilkan terpisah dari disiplin; anggota pindah/nonaktif tidak tersedia pada form kehadiran baru tetapi histori dan peringkatnya tetap terlihat.
+11. Pengurus dapat membuka sesi absensi mandiri dengan link, kode singkat, waktu aktif, dan radius lokasi untuk kegiatan offline.
+12. Beswan wajib login, hanya dapat mengirim satu catatan per kegiatan, dan lokasi hanya diambil saat check-in/check-out.
+13. Absensi mandiri berstatus menunggu verifikasi dan belum memberi poin sampai disetujui pengurus.
+14. Check-out sebelum durasi minimum mengusulkan status Hadir sebagian; keputusan akhir tetap pada pengurus.
+15. Lokasi desktop yang sangat kasar tetap dapat dikirim sebagai catatan pending bertanda akurasi rendah; lokasi akurat di luar radius tetap ditolak.
 
 ## Arsitektur aktif
 
@@ -147,8 +159,10 @@ docs/                    PRD, status, dan keputusan implementasi
 | `/calendar` | Agenda organisasi |
 | `/inventory` | Inventaris dan peminjaman |
 | `/attendance` | Pencatatan kehadiran dan rekap poin beswan |
+| `/check-in/[token]` | Check-in dan check-out mandiri melalui sesi kegiatan terbatas |
 | `/points/[memberId]` | Rincian sumber poin yang dapat dibagikan secara privat |
 | `/profile` | Pengaturan profil pengguna aktif |
+| `/accounts` | Manajemen akun login beswan oleh Super Admin |
 | `/activity` | Log aktivitas |
 | `/settings` | Konfigurasi sistem |
 | `/api/health/supabase` | Pemeriksaan koneksi Supabase server-side |
@@ -190,7 +204,14 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-07 | Top loader global menggantikan root skeleton | Menjaga konteks halaman saat navigasi dan menghindari redraw sidebar, tabel, serta pagination palsu |
 | 2026-09-07 | Poin kehadiran dikonfigurasi per kegiatan dan disimpan sebagai snapshot | Nilai kegiatan pada spreadsheet lama berbeda-beda dan histori tidak boleh berubah secara retroaktif |
 | 2026-09-07 | Nama profil dikirim bersama render server | Menghapus identitas demo dan perubahan teks sesaat ketika halaman dimuat ulang |
+| 2026-09-07 | Cache baca pendek dengan invalidasi setelah mutasi | Mengurangi perjalanan berulang ke Supabase tanpa membuat data hasil edit tertinggal |
+| 2026-09-07 | Absensi mandiri selalu menunggu verifikasi | Link, GPS, dan kode mengurangi penyalahgunaan tetapi tidak menggantikan keputusan pengurus |
+| 2026-09-09 | Akun dikelola langsung melalui Supabase Auth | Satu identitas untuk login dan profil anggota; tidak ada registrasi mandiri beswan |
+| 2026-09-09 | Aktivasi periode memakai fungsi database `set_active_period` | Indeks `periods_one_active` hanya memuat satu baris aktif, sehingga penonaktifan dan pengaktifan tidak boleh terpisah menjadi dua permintaan |
+| 2026-09-09 | Penetapan divisi hanya mengganti penugasan pada periode aktif | Histori divisi periode sebelumnya harus tetap utuh untuk rekap dan laporan |
+| 2026-09-09 | Satu anggota menempati satu divisi per periode, diatur satu tempat di `division-assignment.ts` | Halaman Anggota dan halaman Divisi sama-sama mengubah penugasan, sehingga aturannya tidak boleh digandakan |
+| 2026-09-09 | Halaman modul memeriksa permission sendiri sebelum memuat data | Tabel generik `/[section]` sebelumnya membaca Supabase tanpa pemeriksaan izin |
 
 ## Langkah berikutnya
 
-Terapkan keempat file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase atau berikan database password untuk menjalankannya dari CLI. Setelah itu hubungkan CRUD modul inti, siapkan pemetaan CSV ke anggota, dan konfigurasi Google Drive.
+Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Setelah itu isi `role_permissions` untuk role selain Super Admin agar halaman Anggota, Periode, dan Divisi terbuka bagi pengurus, lanjutkan CRUD kepengurusan, siapkan pemetaan CSV ke anggota, dan konfigurasi Google Drive.

@@ -3,7 +3,8 @@ import { DashboardShell } from "@/frontend/components/dashboard-shell";
 import { loadSectionRows } from "@/backend/section-data";
 import { loadProfile } from "@/backend/profile-data";
 
-const sections = new Set(["members", "management", "divisions", "periods", "programs", "tasks", "calendar", "inventory", "activity", "settings"]);
+// members dan periods punya halaman CRUD sendiri; sisanya masih tabel baca-saja generik.
+const sections = new Set(["management", "programs", "tasks", "calendar", "inventory", "activity", "settings"]);
 
 export function generateStaticParams() {
   return [...sections].map((section) => ({ section }));
