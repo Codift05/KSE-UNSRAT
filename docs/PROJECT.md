@@ -33,7 +33,8 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Anggota | Implementasi siap | Edit data, status anggota, dan penetapan divisi periode aktif; pembuatan anggota lewat halaman Akun |
 | Divisi | Implementasi siap | CRUD divisi periode aktif, koordinator, dan kelola anggota dari dua sisi |
 | Struktur kepengurusan | Implementasi siap | CRUD jabatan dengan urutan, penetapan pengurus ke jabatan dan divisi |
-| Agenda dan activity log | UI + migration siap | Menunggu migration dan integrasi CRUD |
+| Log aktivitas | Implementasi siap | Riwayat dengan pencarian, saringan jenis entitas, dan waktu relatif |
+| Agenda dan kalender | UI + migration siap | Menunggu integrasi CRUD |
 | Program dan tugas | Implementasi siap | CRUD program dengan progress dari tugas selesai, dan CRUD tugas dengan penerima, prioritas, serta tenggat |
 | Google Drive | Belum | Memerlukan credential Google server-side |
 | Inventaris dan peminjaman | UI + migration siap | Menunggu migration dan integrasi CRUD |
@@ -217,4 +218,4 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 
 ## Langkah berikutnya
 
-Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Dashboard sudah membaca agregasi nyata dan `attendance.view` serta `attendance.manage` sudah terekam sebagai migration. Role dan permission kini diatur dari halaman Pengaturan, sehingga pengurus selain Super Admin dapat diberi akses tanpa menyentuh SQL Editor. Berikutnya lanjutkan ke agenda/kalender, inventaris, dan log aktivitas yang masih memakai tabel demo generik, lalu siapkan pemetaan CSV ke anggota dan konfigurasi Google Drive.
+Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Dashboard sudah membaca agregasi nyata dan `attendance.view` serta `attendance.manage` sudah terekam sebagai migration. Role dan permission kini diatur dari halaman Pengaturan, sehingga pengurus selain Super Admin dapat diberi akses tanpa menyentuh SQL Editor. Berikutnya lanjutkan ke agenda/kalender dan inventaris yang masih memakai tabel demo generik, lalu siapkan pemetaan CSV ke anggota dan konfigurasi Google Drive.
