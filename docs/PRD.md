@@ -234,6 +234,10 @@ Pengurus dapat mencatat status Hadir, Terlambat, Hadir sebagian, Izin, Alpa, ata
 
 Rekap periode menampilkan total poin dan jumlah setiap status per beswan. Nama beswan membuka rincian kegiatan yang menjelaskan tanggal, pelaksanaan, status, poin, dan bukti izin. Tautan rincian dapat dibagikan, tetapi beswan wajib login dan hanya dapat melihat datanya sendiri. Pengurus dengan permission kehadiran dapat melihat seluruh rincian. Spreadsheet lama dapat diimpor pada tahap migrasi setelah pemetaan nama beswan dan kegiatan diverifikasi.
 
+Rekap diurutkan dari total poin tertinggi dan menampilkan tingkat keaktifan. Peringatan disiplin ditentukan dari akumulasi Alpa dalam periode: SP1 pada 3 kali, SP2 pada 6 kali, dan SP3 pada 8 kali. Status keanggotaan seperti aktif, nonaktif, pindah, atau alumni ditampilkan terpisah agar tidak disamakan dengan peringatan disiplin.
+
+Pengurus dapat membuka sesi absensi mandiri untuk suatu kegiatan. Sesi memiliki tautan acak, kode singkat, waktu buka-tutup, dan untuk kegiatan offline dapat memiliki titik lokasi serta radius. Beswan wajib login dan hanya dapat check-in satu kali per kegiatan. Sistem menyimpan waktu dan bukti lokasi hanya saat check-in/check-out. Catatan mandiri selalu menunggu verifikasi dan tidak memberikan poin sebelum disetujui pengurus. Check-out sebelum durasi minimum mengusulkan status Hadir sebagian.
+
 ---
 
 # 8. Functional Requirements
@@ -251,6 +255,8 @@ Fitur:
 * role-based access control.
 
 Pengguna hanya dapat mengakses fitur sesuai permission yang dimiliki.
+
+Super Admin dapat membuat akun login untuk beswan, menonaktifkan akses, mengatur ulang password, dan menghapus akun secara permanen. Beswan tidak melakukan pendaftaran mandiri; akun dibuat hanya saat mereka membutuhkan akses ke portal.
 
 ---
 

@@ -36,7 +36,7 @@ const navGroups = [
   { label: "Organisasi", items: [["Anggota", "/members", Users], ["Kepengurusan", "/management", SquaresFour], ["Divisi", "/divisions", Users], ["Periode", "/periods", CalendarBlank]] },
   { label: "Program", items: [["Semua program", "/programs", ChartLineUp], ["Tugas saya", "/tasks", CheckCircle], ["Kalender", "/calendar", CalendarBlank]] },
   { label: "Operasional", items: [["Kehadiran & poin", "/attendance", UserCheck], ["Inventaris", "/inventory", Cube], ["Dokumen", "/documents", FileText], ["Log aktivitas", "/activity", List]] },
-  { label: "Sistem", items: [["Pengaturan", "/settings", Gear]] },
+  { label: "Sistem", items: [["Akun", "/accounts", User], ["Pengaturan", "/settings", Gear]] },
 ] as const;
 
 const programs = [

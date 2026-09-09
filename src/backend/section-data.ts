@@ -1,5 +1,6 @@
 import "server-only";
-import { createSupabaseServerClient } from "@/backend/supabase/server";
+import { unstable_cache } from "next/cache";
+import { supabaseAdmin } from "@/backend/supabase/admin";
 
 type Row = Record<string, unknown>;
 
@@ -8,17 +9,16 @@ const date = (value: unknown) => value ? new Intl.DateTimeFormat("id-ID", { day:
 const label = (value: unknown) => text(value).replaceAll("_", " ").replace(/\b\w/g, letter => letter.toUpperCase());
 const tables: Record<string, string> = { members: "profiles", management: "management_members", divisions: "divisions", periods: "periods", programs: "programs", tasks: "tasks", calendar: "events", inventory: "inventory_items", activity: "activity_logs", settings: "settings" };
 
-export async function loadSectionRows(section: string): Promise<string[][]> {
-  const supabase = await createSupabaseServerClient();
+export const loadSectionRows = unstable_cache(async (section: string): Promise<string[][]> => {
   const table = tables[section];
   if (!table) return [];
 
   // ponytail: client pagination is capped at 100 rows; use Supabase range() when a module exceeds that.
-  const { data, error } = await supabase.from(table).select("*").limit(100);
+  const { data, error } = await supabaseAdmin.from(table).select("*").limit(100);
   if (error) throw new Error(`Gagal memuat ${section}: ${error.message}`);
 
   return (data as Row[]).map(row => formatRow(section, row));
-}
+}, ["section-rows"], { revalidate: 30, tags: ["sections"] });
 
 function formatRow(section: string, row: Row): string[] {
   switch (section) {
