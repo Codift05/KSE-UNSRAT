@@ -701,6 +701,26 @@ a:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-vis
   background-position: right 2px center;
 }
 
+/* ── Anchor yang memakai kelas tombol ─────────────────────────────────────────
+   .primary-button, .period-button, dan .danger-button ditulis untuk <button>.
+   Ketika dipakai pada <Link>, elemen <a> tetap mendapat garis bawah dan warna
+   tautan bawaan browser, sehingga tombol tampak seperti tautan mentah. */
+a.primary-button, a.period-button, a.danger-button,
+.notice-actions a, .account-actions a, .sidebar-legal a {
+  text-decoration: none;
+}
+a.primary-button, a.period-button, a.danger-button {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+}
+a.primary-button { color: #fff; }
+a.period-button { color: var(--text); }
+a.primary-button:visited { color: #fff; }
+a.period-button:visited, .account-actions a:visited { color: var(--text); }
+.sidebar-legal a:visited { color: var(--muted); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
