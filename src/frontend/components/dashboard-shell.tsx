@@ -10,7 +10,6 @@ import {
   Clock,
   Cube,
   FileText,
-  FolderOpen,
   Gear,
   House,
   List,
@@ -28,8 +27,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { logout } from "@/app/login/actions";
-import { Pagination } from "@/frontend/components/pagination";
-import type { DashboardData, DocumentRow } from "@/backend/dashboard-data";
+import type { DashboardData } from "@/backend/dashboard-data";
 
 const navGroups = [
   { label: "", items: [["Dashboard", "/", House]] },
@@ -41,11 +39,10 @@ const navGroups = [
 
 
 
-export function DashboardShell({ accountName, dashboard, documentRows, content }: { accountName: string; dashboard?: DashboardData; documentRows?: DocumentRow[]; content?: React.ReactNode }) {
+export function DashboardShell({ accountName, dashboard, content }: { accountName: string; dashboard?: DashboardData; content?: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const pathname = usePathname();
-  const isDocuments = pathname === "/documents";
   const displayName = accountName;
   const firstName = accountName.split(/\s+/)[0];
   const initials = displayName.split(/\s+/).map(part => part[0]).slice(0, 2).join("").toUpperCase();
@@ -83,7 +80,7 @@ export function DashboardShell({ accountName, dashboard, documentRows, content }
           <button className="icon-button" aria-label="Notifikasi"><Bell size={20} /></button>
         </header>
 
-        {content ?? (isDocuments ? <DocumentsView rows={documentRows} /> : <div className="content">
+        {content ?? (<div className="content">
           <section className="page-heading">
             <div><p>{dashboard?.todayLabel ?? ""}</p><h1>{dashboard?.greeting ?? "Halo"}{firstName ? `, ${firstName}` : ""}.</h1><span>Berikut ringkasan organisasi hari ini.</span></div>
             <div className="heading-actions">
@@ -142,53 +139,6 @@ export function DashboardShell({ accountName, dashboard, documentRows, content }
     </div>
   );
 }
-
-const documents = [
-  { title: "Proposal KSE Mengajar", category: "Proposal", program: "KSE Mengajar", owner: "Miftah S.", updated: "Hari ini, 09.42", status: "Lengkap" },
-  { title: "LPJ Sharing Session", category: "LPJ", program: "Sharing Session", owner: "Vinny Moningka", updated: "Kemarin, 16.10", status: "Lengkap" },
-  { title: "Notulen Rapat Pengurus", category: "Notulen", program: "Organisasi", owner: "Ezra Mandagi", updated: "5 Sep 2026", status: "Perlu review" },
-  { title: "SK Kepengurusan 2026-2027", category: "SK", program: "Organisasi", owner: "Fitra Maulana", updated: "1 Sep 2026", status: "Lengkap" },
-];
-
-function DocumentsView({ rows }: { rows?: DocumentRow[] }) {
-  const sourceRows = rows ?? documents;
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("");
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
-  const filteredRows = sourceRows.filter(item => (!category || item.category === category) && Object.values(item).join(" ").toLowerCase().includes(query.toLowerCase()));
-  const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
-  const visibleRows = filteredRows.slice((page - 1) * pageSize, page * pageSize);
-  return <div className="content documents-page">
-    <section className="page-heading">
-      <div><h1>Dokumen</h1><span>Monitor kelengkapan dan akses seluruh dokumentasi KSE Unsrat.</span></div>
-      <button className="primary-button standalone"><Plus size={18} weight="bold" />Tambah dokumen</button>
-    </section>
-
-    <section className="document-summary" aria-label="Ringkasan dokumen">
-      <div><span>Total dokumen</span><strong>{sourceRows.length}</strong><small>Periode aktif</small></div>
-      <div><span>Dokumen lengkap</span><strong>{sourceRows.filter(item => item.status === "Lengkap").length}</strong><small>Metadata terindeks</small></div>
-      <div><span>Perlu ditinjau</span><strong>{sourceRows.filter(item => item.status !== "Lengkap").length}</strong><small>Menunggu verifikasi</small></div>
-      <div className="drive-state"><span>Status penyimpanan</span><strong>Google Drive</strong><small>Tersambung</small></div>
-    </section>
-
-    <section className="panel document-library">
-      <div className="panel-heading document-toolbar"><div><h2>Semua dokumen</h2><p>Metadata arsip pada periode aktif</p></div><div className="document-actions"><label className="table-search"><MagnifyingGlass size={17} /><input value={query} onChange={event => { setQuery(event.target.value); setPage(1); }} aria-label="Cari dokumen" placeholder="Cari dokumen..." /></label><select aria-label="Filter kategori" value={category} onChange={event => { setCategory(event.target.value); setPage(1); }}><option value="">Semua kategori</option><option>Proposal</option><option>LPJ</option><option>Notulen</option><option>SK</option></select></div></div>
-      <div className="document-table-wrap"><table className="document-table"><thead><tr><th>Nama dokumen</th><th>Kategori</th><th>Program</th><th>Pengunggah</th><th>Diperbarui</th><th>Status</th></tr></thead><tbody>{visibleRows.map(doc => <tr key={doc.title}><td><span className="file-icon"><FileText size={18} /></span><strong>{doc.title}</strong></td><td>{doc.category}</td><td>{doc.program}</td><td>{doc.owner}</td><td>{doc.updated}</td><td><em className={doc.status === "Lengkap" ? "complete" : "review"}>{doc.status}</em></td></tr>)}{visibleRows.length === 0 && <tr><td className="empty-table" colSpan={6}><div className="empty-state"><span><FolderOpen size={21} /></span><div><strong>{query || category ? "Dokumen tidak ditemukan" : "Belum ada dokumen"}</strong><p>{query || category ? "Ubah pencarian atau filter kategori." : "Hubungkan Google Drive, lalu tambahkan dokumen pertama."}</p></div></div></td></tr>}</tbody></table></div>
-      {filteredRows.length > 0 && <Pagination page={page} totalPages={totalPages} totalItems={filteredRows.length} pageSize={pageSize} onPage={setPage} />}
-    </section>
-
-    <section className="panel folder-panel">
-      <div className="panel-heading"><div><h2>Folder dokumentasi kegiatan</h2><p>Foto dan video disimpan langsung di Google Drive</p></div><button>Buka Drive</button></div>
-      <div className="folder-grid"><Folder name="KSE Mengajar" count="127 file" updated="18 Sep 2026" /><Folder name="Sharing Session" count="84 file" updated="12 Sep 2026" /><Folder name="Welcoming Scholars" count="36 file" updated="2 Sep 2026" /></div>
-    </section>
-  </div>;
-}
-
-function Folder({ name, count, updated }: { name: string; count: string; updated: string }) {
-  return <article><span><ArchiveBox size={22} /></span><div><strong>{name}</strong><p>{count} · Diperbarui {updated}</p></div></article>;
-}
-
 function Metric({ icon: Icon, label, value, note, alert = false }: { icon: typeof House; label: string; value: string; note: string; alert?: boolean }) {
   return <article className="metric"><div className="metric-top"><span><Icon size={19} /></span><small>Periode aktif</small></div><strong>{value}</strong><h2>{label}</h2><p className={alert ? "alert" : ""}>{note}</p></article>;
 }

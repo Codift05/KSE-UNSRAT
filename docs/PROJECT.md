@@ -22,7 +22,7 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Fondasi Next.js dan TypeScript | Selesai | Next.js App Router, build produksi lulus |
 | Shell dan navigasi responsif | Selesai | Desktop dan mobile sidebar |
 | Dashboard | Implementasi siap | Metrik, progress program dari tugas selesai, agenda, aktivitas terbaru, dan panel perhatian dibaca dari Supabase |
-| Dokumen | UI siap | Monitoring, tabel, filter, dan folder Drive masih data demo; satu-satunya sisa data contoh |
+| Dokumen | Sebagian | Tabel dan filter membaca metadata Supabase; unggahan dan folder menunggu credential Google Drive |
 | Supabase | Terhubung | Server SDK dan health endpoint tersedia |
 | Authentication | Selesai | Login, reset password, session refresh, proteksi terpusat, dan logout |
 | Profil pengguna | Selesai | Menu akun dan edit data profil mandiri tersedia |
@@ -36,7 +36,7 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Log aktivitas | Implementasi siap | Riwayat dengan pencarian, saringan jenis entitas, dan waktu relatif |
 | Agenda dan kalender | Implementasi siap | CRUD agenda dengan jenis, lokasi, dan kaitan program; kegiatan kehadiran tampil terkunci |
 | Program dan tugas | Implementasi siap | CRUD program dengan progress dari tugas selesai, dan CRUD tugas dengan penerima, prioritas, serta tenggat |
-| Google Drive | Belum | Memerlukan credential Google server-side |
+| Google Drive | Belum | Memerlukan OAuth client dan refresh token akun organisasi; status kesiapannya dibaca dari `drive-config` |
 | Inventaris dan peminjaman | Implementasi siap | CRUD barang, alur pengajuan sampai pengembalian, dan stok tersedia yang dijaga trigger database |
 | Kehadiran dan rekap poin | Implementasi siap | Input, rekap, rincian beswan privat, riwayat, activity log, dan fallback schema tersedia |
 
@@ -217,8 +217,9 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-09 | Perubahan role ditolak bila menyisakan organisasi tanpa pemegang `system.manage` | Kondisi itu tidak dapat diperbaiki lagi dari dalam aplikasi dan hanya bisa dipulihkan lewat SQL Editor |
 | 2026-09-09 | Kalender tidak dapat mengubah atau menghapus kegiatan bertipe `attendance` | Baris itu membawa konfigurasi poin dan token, dan menghapusnya ikut menghapus `attendance_records` lewat on delete cascade |
 | 2026-09-09 | `available_quantity` dihitung trigger database, bukan server action | Dua persetujuan yang berbarengan dapat saling menimpa dan menghasilkan stok yang salah bila dihitung di aplikasi |
+| 2026-09-09 | Google Drive memakai OAuth refresh token akun organisasi, bukan service account | Service account tidak punya kuota penyimpanan Drive sendiri sehingga hanya bekerja pada Shared Drive milik Workspace berbayar |
 | 2026-09-09 | Waktu kegiatan dibaca dan ditampilkan sebagai WITA lewat satu fungsi teruji | Form kehadiran sebelumnya menyimpan input sebagai WIB dan formatter tampilan tidak menyetel zona sama sekali, sehingga jam meleset satu jam saat disimpan dan delapan jam saat ditampilkan di server UTC |
 
 ## Langkah berikutnya
 
-Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Dashboard sudah membaca agregasi nyata dan `attendance.view` serta `attendance.manage` sudah terekam sebagai migration. Role dan permission kini diatur dari halaman Pengaturan, sehingga pengurus selain Super Admin dapat diberi akses tanpa menyentuh SQL Editor. Seluruh modul sudah keluar dari tabel demo generik, dan route `/[section]` beserta `module-view` sudah dihapus. Sisa data contoh hanya pada halaman Dokumen, yang menunggu konfigurasi Google Drive. Berikutnya siapkan pemetaan CSV ke anggota dan credential Drive. Kegiatan `MUBES` tersimpan satu jam lebih lambat dari yang diketik karena dibuat sebelum perbaikan zona waktu; perbaiki manual bila jamnya penting.
+Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Dashboard sudah membaca agregasi nyata dan `attendance.view` serta `attendance.manage` sudah terekam sebagai migration. Role dan permission kini diatur dari halaman Pengaturan, sehingga pengurus selain Super Admin dapat diberi akses tanpa menyentuh SQL Editor. Seluruh modul sudah keluar dari tabel demo generik, route `/[section]` beserta `module-view` sudah dihapus, dan tidak ada lagi data contoh di dalam aplikasi. Berikutnya siapkan pemetaan CSV ke anggota dan credential Drive. Kegiatan `MUBES` tersimpan satu jam lebih lambat dari yang diketik karena dibuat sebelum perbaikan zona waktu; perbaiki manual bila jamnya penting.
