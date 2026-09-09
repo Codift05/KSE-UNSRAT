@@ -34,7 +34,7 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Divisi | Implementasi siap | CRUD divisi periode aktif, koordinator, dan kelola anggota dari dua sisi |
 | Struktur kepengurusan | Implementasi siap | CRUD jabatan dengan urutan, penetapan pengurus ke jabatan dan divisi |
 | Log aktivitas | Implementasi siap | Riwayat dengan pencarian, saringan jenis entitas, dan waktu relatif |
-| Agenda dan kalender | UI + migration siap | Menunggu integrasi CRUD |
+| Agenda dan kalender | Implementasi siap | CRUD agenda dengan jenis, lokasi, dan kaitan program; kegiatan kehadiran tampil terkunci |
 | Program dan tugas | Implementasi siap | CRUD program dengan progress dari tugas selesai, dan CRUD tugas dengan penerima, prioritas, serta tenggat |
 | Google Drive | Belum | Memerlukan credential Google server-side |
 | Inventaris dan peminjaman | UI + migration siap | Menunggu migration dan integrasi CRUD |
@@ -215,7 +215,9 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-09 | Tanggal, jam sapaan, dan batas keterlambatan memakai zona `Asia/Makassar` | Server berjalan di UTC sedangkan Manado di WITA, sehingga tanggal dapat bergeser sehari dan sapaan salah waktu |
 | 2026-09-09 | Penerima tugas boleh mengubah tugasnya sendiri tanpa `task.assign`, tetapi tidak boleh memindahkannya ke orang lain | Menyalin kebijakan RLS tabel `tasks` agar jalur service-role tidak lebih longgar daripada jalur biasa |
 | 2026-09-09 | Perubahan role ditolak bila menyisakan organisasi tanpa pemegang `system.manage` | Kondisi itu tidak dapat diperbaiki lagi dari dalam aplikasi dan hanya bisa dipulihkan lewat SQL Editor |
+| 2026-09-09 | Kalender tidak dapat mengubah atau menghapus kegiatan bertipe `attendance` | Baris itu membawa konfigurasi poin dan token, dan menghapusnya ikut menghapus `attendance_records` lewat on delete cascade |
+| 2026-09-09 | Waktu kegiatan dibaca dan ditampilkan sebagai WITA lewat satu fungsi teruji | Form kehadiran sebelumnya menyimpan input sebagai WIB dan formatter tampilan tidak menyetel zona sama sekali, sehingga jam meleset satu jam saat disimpan dan delapan jam saat ditampilkan di server UTC |
 
 ## Langkah berikutnya
 
-Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Dashboard sudah membaca agregasi nyata dan `attendance.view` serta `attendance.manage` sudah terekam sebagai migration. Role dan permission kini diatur dari halaman Pengaturan, sehingga pengurus selain Super Admin dapat diberi akses tanpa menyentuh SQL Editor. Berikutnya lanjutkan ke agenda/kalender dan inventaris yang masih memakai tabel demo generik, lalu siapkan pemetaan CSV ke anggota dan konfigurasi Google Drive.
+Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Dashboard sudah membaca agregasi nyata dan `attendance.view` serta `attendance.manage` sudah terekam sebagai migration. Role dan permission kini diatur dari halaman Pengaturan, sehingga pengurus selain Super Admin dapat diberi akses tanpa menyentuh SQL Editor. Berikutnya tinggal inventaris yang masih memakai tabel demo generik, lalu siapkan pemetaan CSV ke anggota dan konfigurasi Google Drive. Kegiatan `MUBES` tersimpan satu jam lebih lambat dari yang diketik karena dibuat sebelum perbaikan zona waktu; perbaiki manual bila jamnya penting.

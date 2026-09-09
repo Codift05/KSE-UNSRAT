@@ -1,6 +1,7 @@
 import "server-only";
 import { unstable_cache } from "next/cache";
 import { supabaseAdmin } from "@/backend/supabase/admin";
+import { organizationTimeZone } from "@/backend/time-format";
 import { attendanceStanding, memberStatusLabel } from "@/backend/attendance-status";
 
 export type AttendanceEvent = { id: string; title: string; date: string; mode: string; presentPoints: number; permissionPoints: number; absentPoints: number; sessionOpen: boolean; sessionLink: string | null };
@@ -28,7 +29,7 @@ export const loadAttendance = unstable_cache(async () => {
 
   const events: AttendanceEvent[] = (eventsResult.data || []).map(row => ({
     id: String(row.id), title: String(row.title), mode: row.attendance_mode === "online" ? "Online" : "Offline",
-    date: new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(new Date(String(row.starts_at))),
+    date: new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric", timeZone: organizationTimeZone }).format(new Date(String(row.starts_at))),
     presentPoints: Number(row.present_points), permissionPoints: Number(row.permission_points), absentPoints: Number(row.absent_points),
     sessionOpen: Boolean(row.attendance_token && !row.attendance_locked && row.attendance_close_at && new Date(String(row.attendance_close_at)) > new Date()), sessionLink: row.attendance_token ? `/check-in/${row.attendance_token}` : null,
   }));
@@ -58,4 +59,4 @@ function relation(value: unknown, key: string) {
 }
 
 const statusLabel = (status: string) => ({ present: "Hadir", late: "Terlambat", partial: "Hadir sebagian", permission: "Izin", absent: "Alpa" })[status] || status;
-const time = (value: unknown) => new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(String(value)));
+const time = (value: unknown) => new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: organizationTimeZone }).format(new Date(String(value)));

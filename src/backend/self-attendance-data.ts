@@ -2,6 +2,7 @@ import "server-only";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/backend/supabase/server";
 import { supabaseAdmin } from "@/backend/supabase/admin";
+import { organizationTimeZone } from "@/backend/time-format";
 
 export async function loadSelfAttendance(token: string) {
   const supabase = await createSupabaseServerClient();
@@ -21,4 +22,4 @@ export async function loadSelfAttendance(token: string) {
 }
 
 const labels: Record<string, string> = { present: "Hadir", late: "Terlambat", partial: "Hadir sebagian", permission: "Izin", absent: "Alpa" };
-const format = (value: string) => new Intl.DateTimeFormat("id-ID", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
+const format = (value: string) => new Intl.DateTimeFormat("id-ID", { dateStyle: "medium", timeStyle: "short", timeZone: organizationTimeZone }).format(new Date(value));

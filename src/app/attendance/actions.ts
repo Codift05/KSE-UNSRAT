@@ -6,6 +6,7 @@ import { requirePermission } from "@/backend/authorization";
 import { distanceMeters, validCoordinates } from "@/backend/attendance-location";
 import { createSupabaseServerClient } from "@/backend/supabase/server";
 import { supabaseAdmin } from "@/backend/supabase/admin";
+import { organizationDateTimeToIso } from "@/backend/time-format";
 
 const number = (value: FormDataEntryValue | null) => {
   const parsed = Number(value);
@@ -38,7 +39,7 @@ export async function createAttendanceEvent(_: AttendanceActionState, form: Form
     const { data: period } = await supabaseAdmin.from("periods").select("id").eq("is_active", true).single();
     if (!period) throw new Error("Periode aktif belum tersedia");
     const { data: event, error } = await supabaseAdmin.from("events").insert({
-      period_id: period.id, title, type: "attendance", starts_at: new Date(`${startsAt}:00+07:00`).toISOString(), created_by: user.id,
+      period_id: period.id, title, type: "attendance", starts_at: organizationDateTimeToIso(startsAt), created_by: user.id,
       attendance_mode: mode, present_points: fullPoints, late_points: fullPoints, partial_points: fullPoints / 2, permission_points: 0, absent_points: number(form.get("absent_points")),
     }).select("id").single();
     if (error) throw new Error(error.message);

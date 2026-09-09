@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarBlank, Clock, Database, MagnifyingGlass, Plus } from "@phosphor-icons/react";
+import { Clock, Database, MagnifyingGlass, Plus } from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
 
 type Module = {
@@ -13,7 +13,6 @@ type Module = {
 };
 
 const modules: Record<string, Module> = {
-  "/calendar": { title: "Kalender", description: "Jadwal rapat, program, deadline, dan kegiatan internal.", action: "Tambah agenda", stats: [["Agenda bulan ini", "9", "September 2026"], ["Minggu ini", "3", "Jadwal terdekat"], ["Deadline", "4", "Terkait program"]], columns: ["Agenda", "Jenis", "Tanggal", "Lokasi", "Program"], rows: [["Rapat Pengurus", "Rapat", "8 Sep, 19.00", "Sekretariat", "Organisasi"], ["Sharing Session", "Event", "12 Sep, 15.30", "Aula FEB", "Sharing Session"], ["KSE Mengajar", "Program", "18 Sep, 09.00", "SD Inpres Malalayang", "KSE Mengajar"]] },
   "/inventory": { title: "Inventaris", description: "Kelola ketersediaan, kondisi, dan peminjaman aset.", action: "Tambah barang", stats: [["Total barang", "64", "Semua kategori"], ["Sedang dipinjam", "7", "5 transaksi"], ["Terlambat", "2", "Perlu ditagih"]], columns: ["Kode", "Nama barang", "Tersedia", "Kondisi", "Status"], rows: [["KSE-EL-001", "Kamera Canon EOS", "1 dari 2", "Baik", "Dipinjam"], ["KSE-DK-004", "Tripod kamera", "3 dari 4", "Baik", "Tersedia"], ["KSE-EV-012", "Kabel roll 20m", "2 dari 3", "Rusak ringan", "Tersedia"]] },
 };
 
@@ -40,7 +39,6 @@ export function ModuleView({ path, rows: databaseRows }: { path: string; rows?: 
       <div className="document-table-wrap"><table className="document-table module-table"><thead><tr>{module.columns.map(column => <th key={column}>{column}</th>)}</tr></thead><tbody>{rows.map(row => <tr key={row.join("|")}>{row.map((cell, cellIndex) => <td key={module.columns[cellIndex]}>{cellIndex === 0 ? <strong>{cell}</strong> : cellIndex === row.length - 1 ? <em className={cell.includes("Terlambat") || cell.includes("Perlu") ? "review" : "complete"}>{cell}</em> : cell}</td>)}</tr>)}{rows.length === 0 && <tr><td className="empty-table" colSpan={module.columns.length}><div className="empty-state"><span><Database size={21} /></span><div><strong>{query ? "Data tidak ditemukan" : `Belum ada ${module.title.toLowerCase()}`}</strong><p>{query ? "Coba kata kunci lain atau hapus pencarian." : `Gunakan tombol ${module.action} untuk membuat data pertama.`}</p></div></div></td></tr>}</tbody></table></div>
       {filteredRows.length > 0 && <Pagination page={page} totalPages={totalPages} totalItems={filteredRows.length} pageSize={pageSize} onPage={setPage} />}
     </section>
-    {path === "/calendar" && <section className="panel calendar-note"><CalendarBlank size={20} /><div><strong>Tampilan kalender bulanan</strong><p>Akan aktif setelah tabel agenda diterapkan di Supabase.</p></div></section>}
     {path === "/inventory" && <section className="panel calendar-note"><Clock size={20} /><div><strong>Monitoring peminjaman</strong><p>Barang melewati expected return akan ditandai terlambat.</p></div></section>}
   </div>;
 }

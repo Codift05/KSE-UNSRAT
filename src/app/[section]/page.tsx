@@ -4,7 +4,7 @@ import { loadSectionRows } from "@/backend/section-data";
 import { loadProfile } from "@/backend/profile-data";
 
 // members dan periods punya halaman CRUD sendiri; sisanya masih tabel baca-saja generik.
-const sections = new Set(["calendar", "inventory"]);
+const sections = new Set(["inventory"]);
 
 export function generateStaticParams() {
   return [...sections].map((section) => ({ section }));
