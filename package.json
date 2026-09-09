@@ -20,6 +20,7 @@
     "react-dom": "latest"
   },
   "devDependencies": {
+    "supabase": "^2.117.0",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",

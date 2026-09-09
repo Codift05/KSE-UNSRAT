@@ -4,3 +4,6 @@ node_modules
 !.env.example
 *.log
 *.tsbuildinfo
+
+# graphify knowledge graph artifacts
+graphify-out/
