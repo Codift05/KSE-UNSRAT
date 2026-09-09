@@ -34,7 +34,7 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Divisi | Implementasi siap | CRUD divisi periode aktif, koordinator, dan kelola anggota dari dua sisi |
 | Struktur kepengurusan | Implementasi siap | CRUD jabatan dengan urutan, penetapan pengurus ke jabatan dan divisi |
 | Agenda dan activity log | UI + migration siap | Menunggu migration dan integrasi CRUD |
-| Program dan tugas | UI + migration siap | Menunggu migration dan integrasi CRUD |
+| Program dan tugas | Implementasi siap | CRUD program dengan progress dari tugas selesai, dan CRUD tugas dengan penerima, prioritas, serta tenggat |
 | Google Drive | Belum | Memerlukan credential Google server-side |
 | Inventaris dan peminjaman | UI + migration siap | Menunggu migration dan integrasi CRUD |
 | Kehadiran dan rekap poin | Implementasi siap | Input, rekap, rincian beswan privat, riwayat, activity log, dan fallback schema tersedia |
@@ -212,7 +212,8 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-09 | Satu anggota menempati satu divisi per periode, diatur satu tempat di `division-assignment.ts` | Halaman Anggota dan halaman Divisi sama-sama mengubah penugasan, sehingga aturannya tidak boleh digandakan |
 | 2026-09-09 | Halaman modul memeriksa permission sendiri sebelum memuat data | Tabel generik `/[section]` sebelumnya membaca Supabase tanpa pemeriksaan izin |
 | 2026-09-09 | Tanggal, jam sapaan, dan batas keterlambatan memakai zona `Asia/Makassar` | Server berjalan di UTC sedangkan Manado di WITA, sehingga tanggal dapat bergeser sehari dan sapaan salah waktu |
+| 2026-09-09 | Penerima tugas boleh mengubah tugasnya sendiri tanpa `task.assign`, tetapi tidak boleh memindahkannya ke orang lain | Menyalin kebijakan RLS tabel `tasks` agar jalur service-role tidak lebih longgar daripada jalur biasa |
 
 ## Langkah berikutnya
 
-Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Dashboard sudah membaca agregasi nyata dan `attendance.view` serta `attendance.manage` sudah terekam sebagai migration. Berikutnya isi `role_permissions` untuk role selain Super Admin agar halaman organisasi terbuka bagi pengurus, lanjutkan ke Operations (program, tugas, agenda, inventaris) yang masih memakai tabel demo generik, lalu siapkan pemetaan CSV ke anggota dan konfigurasi Google Drive.
+Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Dashboard sudah membaca agregasi nyata dan `attendance.view` serta `attendance.manage` sudah terekam sebagai migration. Program dan tugas sudah terhubung ke Supabase. Berikutnya isi `role_permissions` untuk role selain Super Admin agar halaman organisasi terbuka bagi pengurus, lanjutkan ke agenda/kalender dan inventaris yang masih memakai tabel demo generik, lalu siapkan pemetaan CSV ke anggota dan konfigurasi Google Drive.

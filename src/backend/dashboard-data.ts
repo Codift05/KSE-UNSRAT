@@ -2,6 +2,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { supabaseAdmin } from "@/backend/supabase/admin";
 import { greetingForHour, initialsOf, organizationTimeZone, relativeTimeLabel } from "@/backend/time-format";
+import { programStatusLabel } from "@/backend/program-input";
 
 export type ProgramProgress = { id: string; name: string; division: string; progress: number; due: string; status: string };
 export type AgendaItem = { id: string; day: string; month: string; title: string; meta: string };
@@ -23,7 +24,6 @@ export type DashboardData = {
 };
 export type DocumentRow = { title: string; category: string; program: string; owner: string; updated: string; status: string };
 
-const programStatusLabel: Record<string, string> = { planning: "Perencanaan", ongoing: "Berjalan", evaluation: "Evaluasi", completed: "Selesai", cancelled: "Batal" };
 const shortDate = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", timeZone: organizationTimeZone });
 const longDate = new Intl.DateTimeFormat("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: organizationTimeZone });
 const clock = new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: organizationTimeZone });
@@ -79,7 +79,7 @@ export const loadDashboard = unstable_cache(async (): Promise<DashboardData> => 
         division: program.division_id ? divisionNameById.get(program.division_id) || "Divisi terhapus" : "Lintas divisi",
         progress: tally?.total ? Math.round((tally.done / tally.total) * 100) : 0,
         due: program.ends_on ? shortDate.format(new Date(`${program.ends_on}T00:00:00`)) : "Tanpa tenggat",
-        status: programStatusLabel[program.status] || program.status,
+        status: programStatusLabel(program.status),
       };
     }),
     agenda: (eventRows.data || []).map(event => {
