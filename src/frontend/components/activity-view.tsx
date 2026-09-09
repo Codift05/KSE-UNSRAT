@@ -2,7 +2,7 @@
 
 import { List, MagnifyingGlass } from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
-import { Pagination } from "@/frontend/components/module-view";
+import { Pagination } from "@/frontend/components/pagination";
 import type { ActivityRow } from "@/backend/activity-data";
 
 export function ActivityView({ entries, entityTypes, todayCount, weekCount, activeActors }: {

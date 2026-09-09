@@ -6,7 +6,7 @@ import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { createAttendanceEvent, openAttendanceSession, saveAttendance, verifySelfAttendance } from "@/app/attendance/actions";
 import type { AttendanceEvent, AttendanceMember, AttendanceRecord, AttendanceSummary } from "@/backend/attendance-data";
-import { Pagination } from "@/frontend/components/module-view";
+import { Pagination } from "@/frontend/components/pagination";
 
 export function AttendanceView({ events, members, records, pendingRecords, summary, setupRequired }: { events: AttendanceEvent[]; members: AttendanceMember[]; records: AttendanceRecord[]; pendingRecords: AttendanceRecord[]; summary: AttendanceSummary[]; setupRequired: boolean }) {
   const [query, setQuery] = useState("");

@@ -28,7 +28,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { logout } from "@/app/login/actions";
-import { ModuleView, Pagination } from "@/frontend/components/module-view";
+import { Pagination } from "@/frontend/components/pagination";
 import type { DashboardData, DocumentRow } from "@/backend/dashboard-data";
 
 const navGroups = [
@@ -41,7 +41,7 @@ const navGroups = [
 
 
 
-export function DashboardShell({ accountName, moduleRows, dashboard, documentRows, content }: { accountName: string; moduleRows?: string[][]; dashboard?: DashboardData; documentRows?: DocumentRow[]; content?: React.ReactNode }) {
+export function DashboardShell({ accountName, dashboard, documentRows, content }: { accountName: string; dashboard?: DashboardData; documentRows?: DocumentRow[]; content?: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const pathname = usePathname();
@@ -83,7 +83,7 @@ export function DashboardShell({ accountName, moduleRows, dashboard, documentRow
           <button className="icon-button" aria-label="Notifikasi"><Bell size={20} /></button>
         </header>
 
-        {content ?? (isDocuments ? <DocumentsView rows={documentRows} /> : pathname !== "/" ? <ModuleView path={pathname} rows={moduleRows} /> : <div className="content">
+        {content ?? (isDocuments ? <DocumentsView rows={documentRows} /> : <div className="content">
           <section className="page-heading">
             <div><p>{dashboard?.todayLabel ?? ""}</p><h1>{dashboard?.greeting ?? "Halo"}{firstName ? `, ${firstName}` : ""}.</h1><span>Berikut ringkasan organisasi hari ini.</span></div>
             <div className="heading-actions">

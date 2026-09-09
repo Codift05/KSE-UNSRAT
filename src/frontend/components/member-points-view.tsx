@@ -3,7 +3,7 @@ import { ArrowLeft, Check, Copy, FileText } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useState } from "react";
 import type { PointEntry } from "@/backend/member-points";
-import { Pagination } from "@/frontend/components/module-view";
+import { Pagination } from "@/frontend/components/pagination";
 
 type Data = { member: { id: string; name: string; studyProgram: string; cohortYear: string }; period: string; totalPoints: number; present: number; partial: number; permission: number; absent: number; entries: PointEntry[] };
 export function MemberPointsView({ data }: { data: Data }) {

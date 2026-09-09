@@ -4,7 +4,7 @@ import { MagnifyingGlass, PencilSimple, UserPlus, UsersThree, X } from "@phospho
 import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
 import { setMemberDivision, updateMember } from "@/app/members/actions";
-import { Pagination } from "@/frontend/components/module-view";
+import { Pagination } from "@/frontend/components/pagination";
 import { memberStatuses } from "@/backend/member-profile";
 import { memberStatusLabel } from "@/backend/attendance-status";
 import type { DivisionOption, MemberRow } from "@/backend/members-data";
