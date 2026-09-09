@@ -9,7 +9,7 @@
 // mengizinkannya tanpa perlu mendaftarkan URL apa pun.
 
 import { createServer } from "node:http";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { createInterface } from "node:readline/promises";
 
 const SCOPE = "https://www.googleapis.com/auth/drive.file";
@@ -98,6 +98,30 @@ if (!response.ok || !token.refresh_token) {
   process.exit(1);
 }
 
-console.log("\nSalin baris berikut ke .env.local:\n");
-console.log(`GOOGLE_REFRESH_TOKEN=${token.refresh_token}`);
-console.log("\nScope yang diberikan:", token.scope);
+// Ditulis langsung ke .env.local, bukan dicetak untuk disalin manual: token
+// ini panjang dan penuh karakter yang mudah tertukar saat dibaca mata (I dan l,
+// O dan 0), dan satu karakter salah menghasilkan invalid_grant yang membingungkan.
+const envPath = ".env.local";
+let envFile = "";
+try {
+  envFile = readFileSync(envPath, "utf8");
+} catch {
+  envFile = "";
+}
+const line = `GOOGLE_REFRESH_TOKEN=${token.refresh_token}`;
+envFile = /^GOOGLE_REFRESH_TOKEN=.*$/m.test(envFile)
+  ? envFile.replace(/^GOOGLE_REFRESH_TOKEN=.*$/m, line)
+  : `${envFile.replace(/\s*$/, "")}\n${line}\n`;
+writeFileSync(envPath, envFile);
+
+console.log(`\nRefresh token tersimpan ke ${envPath} (${token.refresh_token.length} karakter).`);
+console.log("Scope yang diberikan:", token.scope);
+
+// Diuji langsung supaya kegagalan ketahuan sekarang, bukan saat dipakai nanti.
+const check = await fetch("https://oauth2.googleapis.com/token", {
+  method: "POST",
+  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  body: new URLSearchParams({ client_id: clientId, client_secret: clientSecret, refresh_token: token.refresh_token, grant_type: "refresh_token" }),
+});
+const verified = await check.json();
+console.log(check.ok && verified.access_token ? "\nTerverifikasi: token dapat menukar access token." : `\nPeringatan: verifikasi gagal - ${JSON.stringify(verified)}`);
