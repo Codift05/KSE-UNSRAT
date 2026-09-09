@@ -4,7 +4,7 @@ import { revalidatePath, updateTag } from "next/cache";
 import { requirePermission } from "@/backend/authorization";
 import { supabaseAdmin } from "@/backend/supabase/admin";
 import { assignMemberToDivision, requireActivePeriod } from "@/backend/division-assignment";
-import { divisionName } from "@/backend/division-input";
+import { divisionName } from "@/backend/org-input";
 import { optionalText } from "@/backend/member-profile";
 
 export type DivisionActionState = { message?: string; error?: string };

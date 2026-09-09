@@ -27,12 +27,12 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Authentication | Selesai | Login, reset password, session refresh, proteksi terpusat, dan logout |
 | Profil pengguna | Selesai | Menu akun dan edit data profil mandiri tersedia |
 | Manajemen akun | Implementasi siap | Super Admin dapat membuat, menonaktifkan, reset password, dan menghapus akun Supabase |
-| Database schema dan RLS | Migration siap | Tujuh migration tersedia; status penerapan perlu dicek di Supabase |
+| Database schema dan RLS | Diterapkan | Tujuh migration tercatat di `supabase_migrations.schema_migrations` lewat Supabase CLI |
 | Role dan permission | Migration siap | Menunggu migration dan integrasi UI |
 | Periode | Implementasi siap | CRUD, aktivasi satu periode via `set_active_period`, arsip, dan hapus dengan penjagaan |
 | Anggota | Implementasi siap | Edit data, status anggota, dan penetapan divisi periode aktif; pembuatan anggota lewat halaman Akun |
 | Divisi | Implementasi siap | CRUD divisi periode aktif, koordinator, dan kelola anggota dari dua sisi |
-| Struktur kepengurusan | UI + migration siap | Menunggu integrasi CRUD |
+| Struktur kepengurusan | Implementasi siap | CRUD jabatan dengan urutan, penetapan pengurus ke jabatan dan divisi |
 | Agenda dan activity log | UI + migration siap | Menunggu migration dan integrasi CRUD |
 | Program dan tugas | UI + migration siap | Menunggu migration dan integrasi CRUD |
 | Google Drive | Belum | Memerlukan credential Google server-side |
@@ -214,4 +214,4 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 
 ## Langkah berikutnya
 
-Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Setelah itu isi `role_permissions` untuk role selain Super Admin agar halaman Anggota, Periode, dan Divisi terbuka bagi pengurus, lanjutkan CRUD kepengurusan, siapkan pemetaan CSV ke anggota, dan konfigurasi Google Drive.
+Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Berikutnya isi `role_permissions` untuk role selain Super Admin agar halaman organisasi terbuka bagi pengurus, rekam `attendance.view` dan `attendance.manage` sebagai migration karena keduanya baru ada di database dan belum di repo, lanjutkan ke Operations (program, tugas, agenda) dan dashboard yang membaca agregasi nyata, lalu siapkan pemetaan CSV ke anggota dan konfigurasi Google Drive.
