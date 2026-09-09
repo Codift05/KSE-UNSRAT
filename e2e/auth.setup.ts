@@ -5,9 +5,7 @@ setup("membuat akun uji dan menyimpan sesi login", async ({ page }) => {
   await createTestAccount();
 
   await page.goto("/login");
-  // Field bernama "Username" tetapi menerima email apa adanya bila tidak ada
-  // pemetaan alias untuknya.
-  await page.getByLabel("Username").fill(TEST_EMAIL);
+  await page.getByLabel("Email").fill(TEST_EMAIL);
   await page.getByLabel("Password").fill(TEST_PASSWORD);
   await page.getByRole("button", { name: "Masuk" }).click();
 

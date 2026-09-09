@@ -17,7 +17,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <div className="auth-form-wrap">
           <div className="login-heading"><div><h2>Masuk</h2><p>Gunakan akun pengurus KSE Unsrat.</p></div></div>
           <form action={login}>
-            <div className="field"><label htmlFor="identifier">Username</label><input id="identifier" name="identifier" type="text" autoComplete="username" required autoFocus /></div>
+            <div className="field"><label htmlFor="identifier">Email</label><input id="identifier" name="identifier" type="email" autoComplete="email" required autoFocus /></div>
             <div className="field"><div className="field-label"><label htmlFor="password">Password</label><Link href="/forgot-password">Lupa password?</Link></div><input id="password" name="password" type="password" autoComplete="current-password" required minLength={6} /></div>
             {error && <p className="form-error" role="alert">{error}</p>}
             <SubmitButton idle="Masuk" pending="Memeriksa akun..." />

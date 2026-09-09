@@ -3,21 +3,20 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/backend/supabase/server";
 
-const accountEmails: Record<string, string> = {
-  miftah: process.env.AUTH_MIFTAH_EMAIL || "",
-};
-
 export async function login(formData: FormData) {
-  const identifier = String(formData.get("identifier") || "").trim().toLowerCase();
+  // Sebelumnya ada pemetaan alias nama pengguna ke email lewat variabel
+  // lingkungan. Cara itu tidak berskala: setiap pengurus baru menuntut
+  // perubahan kode, dan alias diam-diam gagal bila variabelnya tidak diisi.
+  // Akun dibuat pengurus dengan email, jadi email pula yang dipakai masuk.
+  const email = String(formData.get("identifier") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
-  const email = accountEmails[identifier] || identifier;
 
-  if (!identifier || !password) redirect("/login?error=Username%20dan%20password%20wajib%20diisi");
+  if (!email || !password) redirect("/login?error=Email%20dan%20password%20wajib%20diisi");
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-  if (error) redirect("/login?error=Username%20atau%20password%20tidak%20valid");
+  if (error) redirect("/login?error=Email%20atau%20password%20tidak%20valid");
   redirect("/");
 }
 
