@@ -6,5 +6,5 @@ import { loadProfile } from "@/backend/profile-data";
 
 export default async function TasksPage() {
   const [profile, data, canCreate, canAssign] = await Promise.all([loadProfile(), loadTasks(), hasPermission("task.create"), hasPermission("task.assign")]);
-  return <DashboardShell accountName={profile.fullName} content={<TasksView {...data} canCreate={canCreate} canAssign={canAssign} />} />;
+  return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} content={<TasksView {...data} canCreate={canCreate} canAssign={canAssign} />} />;
 }

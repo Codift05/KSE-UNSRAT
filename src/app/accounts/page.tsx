@@ -5,5 +5,5 @@ import { loadProfile } from "@/backend/profile-data";
 
 export default async function AccountsPage() {
   const [data, profile] = await Promise.all([loadAccounts(), loadProfile()]);
-  return <DashboardShell accountName={profile.fullName} content={<AccountsView {...data} />} />;
+  return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} content={<AccountsView {...data} />} />;
 }

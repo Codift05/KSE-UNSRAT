@@ -6,5 +6,5 @@ import { loadProfile } from "@/backend/profile-data";
 
 export default async function InventoryPage() {
   const [profile, data, canManage, canApprove] = await Promise.all([loadProfile(), loadInventory(), hasPermission("inventory.manage"), hasPermission("inventory.approve")]);
-  return <DashboardShell accountName={profile.fullName} content={<InventoryView {...data} canManage={canManage} canApprove={canApprove} />} />;
+  return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} content={<InventoryView {...data} canManage={canManage} canApprove={canApprove} />} />;
 }

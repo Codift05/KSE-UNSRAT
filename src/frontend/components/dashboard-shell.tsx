@@ -2,7 +2,6 @@
 
 import {
   ArchiveBoxIcon as ArchiveBox,
-  Bell,
   CalendarBlank,
   CaretDown,
   ChartLineUp,
@@ -23,7 +22,7 @@ import {
   X,
 } from "@phosphor-icons/react";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { logout } from "@/app/login/actions";
@@ -39,7 +38,7 @@ const navGroups = [
 
 
 
-export function DashboardShell({ accountName, dashboard, content }: { accountName: string; dashboard?: DashboardData; content?: React.ReactNode }) {
+export function DashboardShell({ accountName, accountRole, dashboard, content }: { accountName: string; accountRole?: string; dashboard?: DashboardData; content?: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const pathname = usePathname();
@@ -68,16 +67,19 @@ export function DashboardShell({ accountName, dashboard, content }: { accountNam
             </div>
           ))}
         </nav>
+        <div className="sidebar-legal">
+          <Link href="/privacy" onClick={() => setOpen(false)}>Kebijakan privasi</Link>
+          <Link href="/terms" onClick={() => setOpen(false)}>Ketentuan</Link>
+        </div>
         <div className="account-control">
           {accountOpen && <div className="account-menu"><Link href="/profile" onClick={() => { setAccountOpen(false); setOpen(false); }}><User size={17} />Edit profil</Link><form action={logout}><button><SignOut size={17} />Keluar</button></form></div>}
-          <button className="user-card" aria-expanded={accountOpen} aria-haspopup="menu" onClick={() => setAccountOpen(value => !value)}><span className="avatar">{initials}</span><span><strong>{displayName}</strong><small>Super Admin</small></span><CaretDown className={accountOpen ? "caret-open" : ""} size={16} /></button>
+          <button className="user-card" aria-expanded={accountOpen} aria-haspopup="menu" onClick={() => setAccountOpen(value => !value)}><span className="avatar">{initials}</span><span><strong>{displayName}</strong><small>{accountRole || "Anggota"}</small></span><CaretDown className={accountOpen ? "caret-open" : ""} size={16} /></button>
         </div>
       </aside>
 
-      <main>
+      <main id="konten">
         <header className="topbar">
-          <label className="search"><MagnifyingGlass size={18} /><input aria-label="Cari" placeholder="Cari program, anggota, dokumen..." /></label>
-          <button className="icon-button" aria-label="Notifikasi"><Bell size={20} /></button>
+          <QuickJump onNavigate={() => setOpen(false)} />
         </header>
 
         {content ?? (<div className="content">
@@ -85,7 +87,7 @@ export function DashboardShell({ accountName, dashboard, content }: { accountNam
             <div><p>{dashboard?.todayLabel ?? ""}</p><h1>{dashboard?.greeting ?? "Halo"}{firstName ? `, ${firstName}` : ""}.</h1><span>Berikut ringkasan organisasi hari ini.</span></div>
             <div className="heading-actions">
               <Link className="period-button" href="/periods"><CalendarBlank size={18} />{dashboard?.periodName ?? "Periode"}<CaretDown size={14} /></Link>
-              <button className="primary-button"><Plus size={18} weight="bold" />Program baru</button>
+              <Link className="primary-button" href="/programs"><Plus size={18} weight="bold" />Program baru</Link>
             </div>
           </section>
 
@@ -139,6 +141,48 @@ export function DashboardShell({ accountName, dashboard, content }: { accountNam
     </div>
   );
 }
+const navDestinations = navGroups.flatMap(group => group.items.map(([label, href]) => ({ label, href })));
+
+// Kotak pencarian sebelumnya tidak melakukan apa pun. Diubah menjadi lompatan
+// cepat antar halaman: mengetik menyaring tujuan, Enter membuka yang teratas.
+function QuickJump({ onNavigate }: { onNavigate: () => void }) {
+  const [query, setQuery] = useState("");
+  const [focused, setFocused] = useState(false);
+  const router = useRouter();
+  const matches = query.trim()
+    ? navDestinations.filter(item => item.label.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 6)
+    : [];
+
+  function go(href: string) {
+    setQuery("");
+    setFocused(false);
+    onNavigate();
+    router.push(href);
+  }
+
+  return <div className="quick-jump">
+    <label className="search">
+      <MagnifyingGlass size={18} />
+      <input
+        aria-label="Lompat ke halaman"
+        placeholder="Lompat ke halaman..."
+        value={query}
+        onChange={event => setQuery(event.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => window.setTimeout(() => setFocused(false), 120)}
+        onKeyDown={event => {
+          if (event.key === "Enter" && matches.length) { event.preventDefault(); go(matches[0].href); }
+          if (event.key === "Escape") { setQuery(""); setFocused(false); }
+        }}
+      />
+    </label>
+    {focused && query.trim() > "" && <ul className="quick-jump-list">
+      {matches.map(item => <li key={item.href}><button type="button" onMouseDown={() => go(item.href)}>{item.label}<span>{item.href}</span></button></li>)}
+      {!matches.length && <li className="quick-jump-empty">Tidak ada halaman yang cocok.</li>}
+    </ul>}
+  </div>;
+}
+
 function Metric({ icon: Icon, label, value, note, alert = false }: { icon: typeof House; label: string; value: string; note: string; alert?: boolean }) {
   return <article className="metric"><div className="metric-top"><span><Icon size={19} /></span><small>Periode aktif</small></div><strong>{value}</strong><h2>{label}</h2><p className={alert ? "alert" : ""}>{note}</p></article>;
 }

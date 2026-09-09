@@ -217,6 +217,8 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-09 | Perubahan role ditolak bila menyisakan organisasi tanpa pemegang `system.manage` | Kondisi itu tidak dapat diperbaiki lagi dari dalam aplikasi dan hanya bisa dipulihkan lewat SQL Editor |
 | 2026-09-09 | Kalender tidak dapat mengubah atau menghapus kegiatan bertipe `attendance` | Baris itu membawa konfigurasi poin dan token, dan menghapusnya ikut menghapus `attendance_records` lewat on delete cascade |
 | 2026-09-09 | `available_quantity` dihitung trigger database, bukan server action | Dua persetujuan yang berbarengan dapat saling menimpa dan menghasilkan stok yang salah bila dihitung di aplikasi |
+| 2026-09-09 | Audit desain mempertahankan Geist, palet hijau tunggal, dan tata letak yang ada | Ketiganya sudah memenuhi standar; merombaknya berarti membongkar sembilan belas halaman yang konsisten tanpa manfaat nyata |
+| 2026-09-09 | Halaman `/privacy` dan `/terms` terbuka tanpa sesi | Pengguna perlu membacanya sebelum masuk, dan Google mengambilnya saat verifikasi OAuth consent screen |
 | 2026-09-09 | Google Drive memakai OAuth refresh token akun organisasi, bukan service account | Service account tidak punya kuota penyimpanan Drive sendiri sehingga hanya bekerja pada Shared Drive milik Workspace berbayar |
 | 2026-09-09 | Folder induk Drive dibuat oleh aplikasi, tidak boleh dibuat manual | Scope `drive.file` hanya memberi akses pada berkas yang dibuat aplikasi ini; folder buatan tangan akan ditolak dengan `File not found` meski jelas ada |
 | 2026-09-09 | Metadata gagal disimpan berarti berkas di Drive ikut dihapus | Mencegah arsip yatim yang tidak terlihat dari aplikasi mana pun |

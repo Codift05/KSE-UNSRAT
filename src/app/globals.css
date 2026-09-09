@@ -393,6 +393,145 @@ main { margin-left: 244px; min-width: 0; }
   .auth-form-panel { align-items: flex-start; padding-top: 18px; }
 }
 
+/* ── Penyempurnaan hasil audit desain ─────────────────────────────────────── */
+
+/* Antarmuka ini padat tabel angka: poin, stok, jumlah, dan tanggal. Angka
+   proporsional membuat lebar kolom bergoyang antar baris, sehingga mata sulit
+   membandingkan nilai secara vertikal. */
+.document-table, .module-stats strong, .document-summary strong, .metric strong,
+.progress-cell strong, .pagination, .date-box strong, .attention-item b {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mencegah satu kata menggantung sendirian di baris terakhir. balance untuk
+   teks pendek berbaris sedikit, pretty untuk paragraf. */
+h1, h2, h3, .empty-state strong, .page-heading span { text-wrap: balance; }
+.empty-state p, .panel-heading p, .inline-message { text-wrap: pretty; }
+
+/* Fokus keyboard sebelumnya hanya tercakup pada sebagian elemen. Semua yang
+   dapat difokuskan kini punya penanda yang sama. */
+a:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible,
+.table-search input:focus-visible, label:focus-within > input {
+  outline: 3px solid rgba(23,107,77,.28);
+  outline-offset: 2px;
+}
+
+/* Umpan balik tekan pada seluruh kontrol, bukan hanya tombol utama. */
+.account-actions button:active, .account-actions a:active, .danger-button:active,
+.delete-account:active, .module-toolbar button:active, .pagination button:active {
+  transform: translateY(1px);
+}
+.account-actions button, .account-actions a, .danger-button, .pagination button {
+  transition: background .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+}
+
+/* Tautan lompat ke konten untuk pengguna keyboard: tersembunyi sampai difokus. */
+.skip-link {
+  background: var(--accent);
+  border-radius: 0 0 var(--radius) 0;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  left: 0;
+  padding: 10px 16px;
+  position: fixed;
+  top: 0;
+  transform: translateY(-120%);
+  transition: transform .15s ease;
+  z-index: 30;
+}
+.skip-link:focus-visible { transform: translateY(0); }
+
+/* Halaman berdiri sendiri: 404, galat, dan dokumen legal. */
+.notice-page {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: 32px;
+}
+.notice-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 40px rgba(20,40,31,.08);
+  max-width: 460px;
+  padding: 36px;
+  text-align: left;
+  width: 100%;
+}
+.notice-card > span {
+  align-items: center;
+  background: var(--accent-soft);
+  border-radius: 10px;
+  color: var(--accent);
+  display: flex;
+  height: 44px;
+  justify-content: center;
+  margin-bottom: 20px;
+  width: 44px;
+}
+.notice-card h1 { font-size: 22px; letter-spacing: -.02em; margin: 0 0 8px; }
+.notice-card p { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0 0 20px; }
+.notice-card code { background: var(--surface-2); border-radius: 5px; font-size: 11px; padding: 2px 6px; }
+.notice-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* Dokumen legal dibaca panjang, jadi lebar barisnya dibatasi agar nyaman. */
+.legal-page { margin: 0 auto; max-width: 68ch; padding: 56px 24px 80px; }
+.legal-page h1 { font-size: 26px; letter-spacing: -.02em; margin: 0 0 6px; }
+.legal-page > p:first-of-type { color: var(--muted); font-size: 12px; margin: 0 0 32px; }
+.legal-page h2 { font-size: 15px; margin: 32px 0 8px; }
+.legal-page p, .legal-page li { color: var(--text); font-size: 13px; line-height: 1.7; }
+.legal-page ul { margin: 8px 0; padding-left: 20px; }
+.legal-page a { color: var(--accent); }
+
+/* Lompatan cepat pada topbar: daftar hasil muncul di bawah kotak pencarian. */
+.quick-jump { position: relative; width: 100%; }
+.quick-jump-list {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 18px 40px rgba(20,40,31,.12);
+  left: 0;
+  list-style: none;
+  margin: 6px 0 0;
+  overflow: hidden;
+  padding: 5px;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 25;
+}
+.quick-jump-list button {
+  align-items: baseline;
+  background: none;
+  border: 0;
+  border-radius: 7px;
+  cursor: pointer;
+  display: flex;
+  font-size: 12.5px;
+  gap: 10px;
+  padding: 9px 10px;
+  text-align: left;
+  transition: background .15s ease;
+  width: 100%;
+}
+.quick-jump-list button:hover { background: var(--surface-2); }
+.quick-jump-list button span { color: var(--muted); font-size: 11px; }
+.quick-jump-empty { color: var(--muted); font-size: 12px; padding: 9px 10px; }
+
+/* Tautan legal di kaki sidebar. */
+.sidebar-legal {
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 0 18px;
+  padding: 12px 0 4px;
+}
+.sidebar-legal a { color: var(--muted); font-size: 11px; }
+.sidebar-legal a:hover { color: var(--accent); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
