@@ -28,7 +28,7 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Profil pengguna | Selesai | Menu akun dan edit data profil mandiri tersedia |
 | Manajemen akun | Implementasi siap | Super Admin dapat membuat, menonaktifkan, reset password, dan menghapus akun Supabase |
 | Database schema dan RLS | Diterapkan | Tujuh migration tercatat di `supabase_migrations.schema_migrations` lewat Supabase CLI |
-| Role dan permission | Migration siap | Menunggu migration dan integrasi UI |
+| Role dan permission | Implementasi siap | Matriks izin per role dan penetapan role per anggota di halaman Pengaturan, dengan penjagaan agar selalu tersisa satu pengelola sistem |
 | Periode | Implementasi siap | CRUD, aktivasi satu periode via `set_active_period`, arsip, dan hapus dengan penjagaan |
 | Anggota | Implementasi siap | Edit data, status anggota, dan penetapan divisi periode aktif; pembuatan anggota lewat halaman Akun |
 | Divisi | Implementasi siap | CRUD divisi periode aktif, koordinator, dan kelola anggota dari dua sisi |
@@ -213,7 +213,8 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-09 | Halaman modul memeriksa permission sendiri sebelum memuat data | Tabel generik `/[section]` sebelumnya membaca Supabase tanpa pemeriksaan izin |
 | 2026-09-09 | Tanggal, jam sapaan, dan batas keterlambatan memakai zona `Asia/Makassar` | Server berjalan di UTC sedangkan Manado di WITA, sehingga tanggal dapat bergeser sehari dan sapaan salah waktu |
 | 2026-09-09 | Penerima tugas boleh mengubah tugasnya sendiri tanpa `task.assign`, tetapi tidak boleh memindahkannya ke orang lain | Menyalin kebijakan RLS tabel `tasks` agar jalur service-role tidak lebih longgar daripada jalur biasa |
+| 2026-09-09 | Perubahan role ditolak bila menyisakan organisasi tanpa pemegang `system.manage` | Kondisi itu tidak dapat diperbaiki lagi dari dalam aplikasi dan hanya bisa dipulihkan lewat SQL Editor |
 
 ## Langkah berikutnya
 
-Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Dashboard sudah membaca agregasi nyata dan `attendance.view` serta `attendance.manage` sudah terekam sebagai migration. Program dan tugas sudah terhubung ke Supabase. Berikutnya isi `role_permissions` untuk role selain Super Admin agar halaman organisasi terbuka bagi pengurus, lanjutkan ke agenda/kalender dan inventaris yang masih memakai tabel demo generik, lalu siapkan pemetaan CSV ke anggota dan konfigurasi Google Drive.
+Terapkan seluruh file dalam `supabase/migrations` secara berurutan melalui SQL Editor Supabase, termasuk `202609070007_period_activation.sql`. Langkah Foundation sudah tertutup: periode, anggota, divisi, jabatan, dan struktur kepengurusan semuanya terhubung ke Supabase. Dashboard sudah membaca agregasi nyata dan `attendance.view` serta `attendance.manage` sudah terekam sebagai migration. Role dan permission kini diatur dari halaman Pengaturan, sehingga pengurus selain Super Admin dapat diberi akses tanpa menyentuh SQL Editor. Berikutnya lanjutkan ke agenda/kalender, inventaris, dan log aktivitas yang masih memakai tabel demo generik, lalu siapkan pemetaan CSV ke anggota dan konfigurasi Google Drive.
