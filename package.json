@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "tsc --noEmit",
     "test": "node --test --experimental-strip-types src/backend/*.test.ts",
-    "test:integration": "node --test --test-concurrency=1 --experimental-strip-types --env-file=.env.local tests/*.integration.test.ts"
+    "test:integration": "node --test --test-concurrency=1 --experimental-strip-types --env-file=.env.local tests/*.integration.test.ts",
+    "test:e2e": "node --env-file=.env.local ./node_modules/@playwright/test/cli.js test"
   },
   "dependencies": {
     "@phosphor-icons/react": "latest",
@@ -21,10 +22,11 @@
     "react-dom": "latest"
   },
   "devDependencies": {
-    "supabase": "^2.117.0",
+    "@playwright/test": "^1.63.0",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
+    "supabase": "^2.117.0",
     "typescript": "latest"
   }
 }
