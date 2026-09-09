@@ -213,7 +213,9 @@ main { margin-left: 244px; min-width: 0; }
 .attendance-form form { display: grid; gap: 14px; padding: 18px 20px 20px; }
 .attendance-form label { display: grid; font-size: 12px; font-weight: 600; gap: 7px; }
 .attendance-form input, .attendance-form select { background: var(--surface); border: 1px solid #cbd3cf; border-radius: 8px; color: var(--text); min-height: 40px; outline: 0; padding: 0 11px; width: 100%; }
-.attendance-form input:focus, .attendance-form select:focus { border-color: #59645f; }
+.attendance-form input:focus, .attendance-form select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(23,107,77,.12); }
+.attendance-form input:hover, .attendance-form select:hover { border-color: #adb8b3; }
+.attendance-form input, .attendance-form select { font: inherit; font-size: 13px; transition: border-color .15s ease, box-shadow .15s ease; }
 .attendance-form button { border-radius: 8px; cursor: pointer; min-height: 40px; }
 .attendance-form button:disabled { cursor: default; opacity: .5; }
 .point-fields { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -259,10 +261,7 @@ main { margin-left: 244px; min-width: 0; }
 .self-attendance-card form button { border-radius: 8px; cursor: pointer; min-height: 44px; }
 .self-attendance-card form button:disabled { cursor: default; opacity: .5; }
 .account-create { margin-bottom: 22px; }
-.account-create form { align-items: end; display: grid; gap: 12px; grid-template-columns: minmax(180px, 1fr) minmax(240px, 1.1fr) minmax(180px, .9fr) max-content; padding: 0 20px 20px; }
 .account-create label { display: grid; font-size: 12px; font-weight: 600; gap: 7px; }
-.account-create input, .account-actions input { border: 1px solid #cbd3cf; border-radius: 8px; min-height: 40px; outline: 0; padding: 0 11px; }
-.account-create .inline-message { grid-column: 1 / -1; }
 .account-submit { display: flex; }
 .account-submit .primary-button { min-height: 40px; min-width: 132px; padding-inline: 16px; white-space: nowrap; }
 .accounts-table { min-width: 940px; }
@@ -531,6 +530,176 @@ a:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-vis
 }
 .sidebar-legal a { color: var(--muted); font-size: 11px; }
 .sidebar-legal a:hover { color: var(--accent); }
+
+/* ── Kontrol formulir ─────────────────────────────────────────────────────────
+   Sebelumnya hanya <input> yang ditata. <select>, <textarea>, pemilih tanggal,
+   dan pemilih berkas tampil dengan gaya bawaan browser sehingga formulir
+   terlihat seperti HTML mentah. Semuanya kini memakai satu bentuk yang sama. */
+
+.account-create input,
+.account-create select,
+.account-create textarea,
+.account-dialog input,
+.account-dialog select,
+.account-dialog textarea,
+.account-actions input {
+  background: var(--surface);
+  border: 1px solid #cbd3cf;
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  min-height: 40px;
+  outline: 0;
+  padding: 0 11px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+  width: 100%;
+}
+
+.account-create textarea, .account-dialog textarea { padding: 10px 11px; resize: vertical; }
+
+.account-create input:hover, .account-create select:hover,
+.account-dialog input:hover, .account-dialog select:hover { border-color: #adb8b3; }
+
+.account-create input:focus, .account-create select:focus, .account-create textarea:focus,
+.account-dialog input:focus, .account-dialog select:focus, .account-dialog textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(23,107,77,.12);
+}
+
+.account-create input::placeholder, .account-dialog input::placeholder { color: #98a29e; }
+
+/* Panah bawaan setiap browser berbeda bentuk; diganti satu ikon yang konsisten. */
+.account-create select,
+.account-dialog select,
+.attendance-form select,
+.module-toolbar select,
+.document-actions select,
+.table-search select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 256 256' fill='%2368736e'%3E%3Cpath d='M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80A8 8 0 0 1 53.66 90.34L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32z'/%3E%3C/svg%3E");
+  background-position: right 11px center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  padding-right: 32px;
+}
+.account-create select:disabled, .account-dialog select:disabled {
+  background-color: var(--surface-2);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+/* Pemilih tanggal dan waktu: ikon kalender bawaan disamakan warnanya. */
+.account-create input[type="date"],
+.account-create input[type="datetime-local"],
+.account-dialog input[type="date"],
+.account-dialog input[type="datetime-local"] { cursor: text; }
+.account-create input[type="date"]::-webkit-calendar-picker-indicator,
+.account-create input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+.account-dialog input[type="date"]::-webkit-calendar-picker-indicator,
+.account-dialog input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: .55;
+  transition: opacity .15s ease;
+}
+.account-create input[type="date"]::-webkit-calendar-picker-indicator:hover,
+.account-dialog input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+
+/* Pemilih berkas: tombol "Choose File" bawaan diganti bentuk yang serasi. */
+.account-create input[type="file"] { align-items: center; display: flex; padding: 0 0 0 4px; }
+.account-create input[type="file"]::file-selector-button {
+  background: var(--surface-2);
+  border: 0;
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: 10px;
+  padding: 8px 12px;
+  transition: background .15s ease;
+}
+.account-create input[type="file"]::file-selector-button:hover { background: var(--accent-soft); color: var(--accent); }
+
+/* ── Tata letak formulir ──────────────────────────────────────────────────────
+   Grid sebelumnya dipatok empat kolom untuk formulir tiga isian. Formulir baru
+   punya enam sampai sembilan isian, sehingga tombol kirim terlempar ke posisi
+   acak dan label antar baris tidak sejajar. Kolom kini menyesuaikan jumlah
+   isian, dan tombol kirim selalu berdiri sendiri di baris terakhir. */
+.account-create form {
+  align-items: end;
+  display: grid;
+  gap: 14px 16px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  padding: 0 20px 20px;
+}
+.account-create .account-submit { grid-column: 1 / -1; justify-content: flex-end; margin-top: 2px; }
+.account-create .inline-message { grid-column: 1 / -1; margin: 0; }
+
+/* Formulir di dalam dialog selalu satu kolom agar terbaca pada layar sempit. */
+.account-dialog form { display: grid; gap: 13px; }
+.account-dialog label { display: grid; font-size: 12px; font-weight: 600; gap: 7px; }
+
+/* ── Tombol di dalam tabel ────────────────────────────────────────────────────
+   Tombol aksi pada tabel peran, peminjaman, dan izin sebelumnya tidak ditata
+   sama sekali sehingga tampil sebagai tombol abu-abu bawaan browser. */
+.document-table td form { display: inline-flex; margin: 0; }
+.document-table td button:not(.delete-account):not(.primary-button):not(.danger-button) {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  min-height: 32px;
+  padding: 0 10px;
+  transition: background .15s ease, border-color .15s ease, transform .15s ease;
+}
+.document-table td button:hover { background: var(--surface-2); border-color: #cbd3cf; }
+.document-table td button:active { transform: translateY(1px); }
+.document-table td button em { font-size: 11px; }
+.account-actions a {
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  min-height: 34px;
+  min-width: 34px;
+}
+.account-actions a:hover, .account-actions button:hover { background: var(--surface-2); }
+
+/* Kotak lompatan cepat pada topbar perlu batas lebar yang sama dengan
+   pencarian sebelumnya, jika tidak ia melebar memenuhi seluruh bilah. */
+.quick-jump { margin-right: auto; max-width: 390px; }
+.module-toolbar select, .document-actions select {
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  font-size: 12.5px;
+  min-height: 36px;
+  padding: 0 32px 0 11px;
+  transition: border-color .15s ease;
+}
+.module-toolbar select:hover, .document-actions select:hover { border-color: #cbd3cf; }
+
+/* Select yang dibungkus .table-search tidak boleh bergaris sendiri; kotak
+   pembungkusnya yang sudah punya garis. */
+.table-search select {
+  background-color: transparent;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  font-size: 12.5px;
+  min-height: 34px;
+  padding: 0 26px 0 2px;
+  background-position: right 2px center;
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
