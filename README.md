@@ -52,3 +52,25 @@ Penyiapan:
 
 Scope yang dipakai hanya `drive.file`, sehingga aplikasi tidak dapat menyentuh
 berkas lain di Drive akun tersebut.
+
+## Pengujian
+
+- `npm test` — uji fungsi murni (validasi, format waktu, perhitungan). Cepat,
+  tanpa jaringan, aman dijalankan kapan saja.
+- `npm run test:integration` — uji kontrak database: trigger, constraint, dan
+  cascade yang tidak dapat dijangkau uji fungsi murni.
+
+Integration test berjalan terhadap database Supabase sungguhan karena trigger
+dan constraint hanya hidup di sana. Karena itu:
+
+- Setiap berkas wajib memanggil `beginSuite` dan `endSuite`. Keduanya mencatat
+  periode yang sedang aktif lalu mengembalikannya, sebab mengaktifkan periode
+  uji menonaktifkan periode nyata dan membuat aplikasi kehilangan konteksnya.
+- Seluruh data uji memakai awalan `__uji__` (atau `UJI-` untuk kode barang) dan
+  dibersihkan sebelum maupun sesudah setiap berkas.
+- Berkas dijalankan berurutan (`--test-concurrency=1`). Menjalankannya paralel
+  membuat pembersihan satu berkas menghapus data uji berkas lain sekaligus
+  memperebutkan periode aktif.
+
+Uji ini tidak menjangkau tampilan. Bug seperti kontrol formulir tanpa gaya atau
+tombol yang tampil sebagai tautan hanya terlihat dengan membuka halamannya.
