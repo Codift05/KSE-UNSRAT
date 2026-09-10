@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { adminClient } from "./account.ts";
+import { adminClient, TEST_NAME } from "./account.ts";
 
 // Alur lintas modul: inilah yang tidak dapat diuji per halaman. Progress program
 // berasal dari tugas, dan stok inventaris berasal dari trigger database, jadi
@@ -102,4 +102,29 @@ test("membuat divisi lalu menetapkannya ke anggota terlihat di halaman Anggota",
 
   await page.getByRole("button", { name: "Tutup" }).click();
   await expect(page.getByRole("row", { name: /Akun Uji Otomatis/ })).toContainText(namaDivisi);
+});
+
+test("koordinator divisi langsung terhitung sebagai anggotanya", async ({ page }) => {
+  const namaDivisi = `${JEJAK} Divisi Koordinator`;
+  const formDivisi = page.locator('form:has(button:has-text("Tambah divisi"))');
+
+  await page.goto("/divisions");
+  await formDivisi.locator('input[name="name"]').fill(namaDivisi);
+  // Dipilih berdasarkan nama akun uji yang pasti ada sepanjang berkas ini,
+  // bukan berdasarkan urutan yang dapat bergeser oleh data berkas lain.
+  await formDivisi.locator('select[name="coordinator_id"]').selectOption({ label: TEST_NAME });
+  await formDivisi.getByRole("button", { name: "Tambah divisi" }).click();
+
+  // Menunjuk koordinator tanpa mencatatnya sebagai anggota akan menyisakan
+  // divisi berisi nol anggota sementara orangnya tetap "belum berdivisi".
+  const galat = page.locator(".inline-message.error");
+  if (await galat.count()) throw new Error(`Divisi gagal dibuat: ${await galat.first().innerText()}`);
+
+  const baris = page.getByRole("row", { name: new RegExp(namaDivisi) }).first();
+  await expect(baris).toContainText("1 anggota");
+  await expect(baris).toContainText(TEST_NAME);
+
+  // Terlihat pula dari sisi anggota, bukan hanya dari hitungan pada tabel divisi.
+  await page.goto("/members");
+  await expect(page.getByRole("row", { name: new RegExp(TEST_NAME) }).first()).toContainText(namaDivisi);
 });

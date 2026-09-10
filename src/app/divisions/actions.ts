@@ -16,6 +16,14 @@ function refreshDivisions() {
   revalidatePath("/divisions"); revalidatePath("/members");
 }
 
+// Daftar pilihan pada formulir dapat menjadi basi bila anggotanya dihapus
+// sementara halaman masih terbuka. Postgres menolaknya dengan pesan teknis;
+// pengurus perlu tahu apa yang harus dilakukan, bukan nama constraint.
+function readable(message: string, code?: string) {
+  if (code === "23503") return "Anggota yang dipilih sudah tidak ada. Muat ulang halaman lalu pilih kembali.";
+  return message;
+}
+
 async function log(actorId: string, action: string, divisionId: string) {
   await supabaseAdmin.from("activity_logs").insert({ actor_id: actorId, action, entity_type: "division", entity_id: divisionId });
 }
@@ -32,7 +40,11 @@ export async function createDivision(_: DivisionActionState, form: FormData): Pr
       description: optionalText(field(form, "description"), 300),
       coordinator_id: coordinatorId || null,
     }).select("id").single();
-    if (error) throw new Error(error.code === "23505" ? `Divisi ${name} sudah ada pada periode ini` : error.message);
+    if (error) throw new Error(error.code === "23505" ? `Divisi ${name} sudah ada pada periode ini` : readable(error.message, error.code));
+    // Koordinator adalah anggota divisinya sendiri. Tanpa ini, menunjuk
+    // koordinator menyisakan divisi berisi nol anggota dan orang itu tetap
+    // terhitung "belum berdivisi", yang membingungkan saat membaca statistik.
+    if (coordinatorId) await assignMemberToDivision(coordinatorId, data.id, period.id);
     await log(actor.id, `Membuat divisi ${name}`, data.id);
     refreshDivisions();
     return { message: `Divisi ${name} dibuat pada periode ${period.name}.` };
@@ -42,6 +54,7 @@ export async function createDivision(_: DivisionActionState, form: FormData): Pr
 export async function updateDivision(_: DivisionActionState, form: FormData): Promise<DivisionActionState> {
   try {
     const actor = await requirePermission("member.update");
+    const period = await requireActivePeriod();
     const divisionId = field(form, "division_id").trim();
     if (!divisionId) throw new Error("Divisi tidak dikenali");
     const name = divisionName(field(form, "name"));
@@ -51,7 +64,10 @@ export async function updateDivision(_: DivisionActionState, form: FormData): Pr
       description: optionalText(field(form, "description"), 300),
       coordinator_id: coordinatorId || null,
     }).eq("id", divisionId);
-    if (error) throw new Error(error.code === "23505" ? `Divisi ${name} sudah ada pada periode ini` : error.message);
+    if (error) throw new Error(error.code === "23505" ? `Divisi ${name} sudah ada pada periode ini` : readable(error.message, error.code));
+    // Koordinator baru ikut menjadi anggota. Koordinator lama tidak dikeluarkan
+    // otomatis karena ia bisa saja tetap anggota biasa di divisi yang sama.
+    if (coordinatorId) await assignMemberToDivision(coordinatorId, divisionId, period.id);
     await log(actor.id, `Mengubah divisi ${name}`, divisionId);
     refreshDivisions();
     return { message: "Divisi berhasil diperbarui." };

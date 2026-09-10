@@ -223,6 +223,8 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-10 | Alamat situs diturunkan dari permintaan bila `NEXT_PUBLIC_SITE_URL` kosong | Tautan reset password sebelumnya jatuh ke `localhost` secara diam-diam saat variabel itu lupa diisi |
 | 2026-09-10 | `system.manage` hanya dimiliki Super Admin | Izin itu dapat mengubah izin orang lain, sehingga memberikannya ke lebih dari satu jabatan membuka kemungkinan dua orang saling mencabut akses |
 | 2026-09-10 | Anggota tetap memperoleh empat izin baca, bukan nol | Dengan nol izin hampir seluruh halaman tertutup dan aplikasi terasa rusak bagi anggota, bukan terbatas |
+| 2026-09-10 | Koordinator divisi otomatis tercatat sebagai anggota divisinya | Tanpa itu menunjuk koordinator menyisakan divisi berisi nol anggota sementara orangnya tetap terhitung belum berdivisi |
+| 2026-09-10 | Ketua dan Wakil Ketua digabung menjadi satu role `Pengurus Inti` | Keduanya menerima izin identik, dan role kembar cenderung menyimpang ketika salah satunya diubah tanpa yang lain; jabatan sebenarnya tetap tercatat pada Kepengurusan |
 | 2026-09-09 | Google Drive memakai OAuth refresh token akun organisasi, bukan service account | Service account tidak punya kuota penyimpanan Drive sendiri sehingga hanya bekerja pada Shared Drive milik Workspace berbayar |
 | 2026-09-09 | Folder induk Drive dibuat oleh aplikasi, tidak boleh dibuat manual | Scope `drive.file` hanya memberi akses pada berkas yang dibuat aplikasi ini; folder buatan tangan akan ditolak dengan `File not found` meski jelas ada |
 | 2026-09-09 | Metadata gagal disimpan berarti berkas di Drive ikut dihapus | Mencegah arsip yatim yang tidak terlihat dari aplikasi mana pun |

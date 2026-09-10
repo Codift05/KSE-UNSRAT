@@ -29,7 +29,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npx next build && npx next start -p ${port}`,
+    // .next/cache dibersihkan lebih dulu: unstable_cache bertahan di disk antar
+    // jalannya test, sehingga daftar pilihan dapat menyajikan anggota yang sudah
+    // dihapus teardown sebelumnya dan membuat test gagal tanpa sebab nyata.
+    command: `rm -rf .next/cache && npx next build && npx next start -p ${port}`,
     url: `http://localhost:${port}/login`,
     reuseExistingServer: false,
     timeout: 180_000,
