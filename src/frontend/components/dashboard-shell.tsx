@@ -29,16 +29,16 @@ import { logout } from "@/app/login/actions";
 import type { DashboardData } from "@/backend/dashboard-data";
 
 const navGroups = [
-  { label: "", items: [["Dashboard", "/", House]] },
-  { label: "Organisasi", items: [["Anggota", "/members", Users], ["Kepengurusan", "/management", SquaresFour], ["Divisi", "/divisions", Users], ["Periode", "/periods", CalendarBlank]] },
-  { label: "Program", items: [["Semua program", "/programs", ChartLineUp], ["Tugas saya", "/tasks", CheckCircle], ["Kalender", "/calendar", CalendarBlank]] },
-  { label: "Operasional", items: [["Kehadiran & poin", "/attendance", UserCheck], ["Inventaris", "/inventory", Cube], ["Dokumen", "/documents", FileText], ["Log aktivitas", "/activity", List]] },
-  { label: "Sistem", items: [["Akun", "/accounts", User], ["Pengaturan", "/settings", Gear]] },
+  { label: "", items: [["Dashboard", "/", House, undefined]] },
+  { label: "Organisasi", items: [["Anggota", "/members", Users, "member.view"], ["Kepengurusan", "/management", SquaresFour, "member.view"], ["Divisi", "/divisions", Users, "member.view"], ["Periode", "/periods", CalendarBlank, "member.view"]] },
+  { label: "Program", items: [["Semua program", "/programs", ChartLineUp, "program.view"], ["Tugas saya", "/tasks", CheckCircle, undefined], ["Kalender", "/calendar", CalendarBlank, "member.view"]] },
+  { label: "Operasional", items: [["Kehadiran & poin", "/attendance", UserCheck, "attendance.view"], ["Inventaris", "/inventory", Cube, undefined], ["Dokumen", "/documents", FileText, undefined], ["Log aktivitas", "/activity", List, undefined]] },
+  { label: "Sistem", items: [["Akun", "/accounts", User, "system.manage"], ["Pengaturan", "/settings", Gear, "system.manage"]] },
 ] as const;
 
 
 
-export function DashboardShell({ accountName, accountRole, dashboard, content }: { accountName: string; accountRole?: string; dashboard?: DashboardData; content?: React.ReactNode }) {
+export function DashboardShell({ accountName, accountRole, permissions = [], dashboard, content }: { accountName: string; accountRole?: string; permissions?: string[]; dashboard?: DashboardData; content?: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const pathname = usePathname();
@@ -56,7 +56,7 @@ export function DashboardShell({ accountName, accountRole, dashboard, content }:
           <button className="close-menu" aria-label="Tutup menu" onClick={() => setOpen(false)}><X size={20} /></button>
         </div>
         <nav aria-label="Navigasi utama">
-          {navGroups.map((group) => (
+          {navGroups.map((group) => ({ ...group, items: group.items.filter(([, , , permission]) => !permission || permissions.includes(permission)) })).filter(group => group.items.length).map((group) => (
             <div className="nav-group" key={group.label || "utama"}>
               {group.label && <p>{group.label}</p>}
               {group.items.map(([label, href, Icon]) => (
@@ -79,7 +79,7 @@ export function DashboardShell({ accountName, accountRole, dashboard, content }:
 
       <main id="konten">
         <header className="topbar">
-          <QuickJump onNavigate={() => setOpen(false)} />
+          <QuickJump onNavigate={() => setOpen(false)} permissions={permissions} />
         </header>
 
         {content ?? (<div className="content">
@@ -141,16 +141,16 @@ export function DashboardShell({ accountName, accountRole, dashboard, content }:
     </div>
   );
 }
-const navDestinations = navGroups.flatMap(group => group.items.map(([label, href]) => ({ label, href })));
+const navDestinations = navGroups.flatMap(group => group.items.map(([label, href, , permission]) => ({ label, href, permission })));
 
 // Kotak pencarian sebelumnya tidak melakukan apa pun. Diubah menjadi lompatan
 // cepat antar halaman: mengetik menyaring tujuan, Enter membuka yang teratas.
-function QuickJump({ onNavigate }: { onNavigate: () => void }) {
+function QuickJump({ onNavigate, permissions }: { onNavigate: () => void; permissions: string[] }) {
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
   const router = useRouter();
   const matches = query.trim()
-    ? navDestinations.filter(item => item.label.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 6)
+    ? navDestinations.filter(item => (!item.permission || permissions.includes(item.permission)) && item.label.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 6)
     : [];
 
   function go(href: string) {

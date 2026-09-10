@@ -46,3 +46,35 @@ export async function createTestAccount() {
 
   return data.user.id;
 }
+
+export const MEMBER_EMAIL = "uji-anggota@kse-management.test";
+export const MEMBER_PASSWORD = "UjiAnggota!kse2026";
+
+/** Akun beruang "Anggota" untuk membuktikan pembatasan per peran benar-benar
+ *  terasa: menu yang tidak berizin disembunyikan, dan halaman yang tertutup
+ *  menolak dengan penjelasan alih-alih melempar galat. */
+export async function createMemberAccount() {
+  const db = adminClient();
+  await removeMemberAccount();
+
+  const { data, error } = await db.auth.admin.createUser({
+    email: MEMBER_EMAIL, password: MEMBER_PASSWORD, email_confirm: true, user_metadata: { full_name: "Anggota Uji" },
+  });
+  if (error || !data.user) throw new Error(`Akun anggota uji gagal dibuat: ${error?.message}`);
+  await db.from("profiles").update({ full_name: "Anggota Uji", member_status: "active" }).eq("id", data.user.id);
+
+  const [{ data: role }, { data: period }] = await Promise.all([
+    db.from("roles").select("id").eq("name", "Anggota").single(),
+    db.from("periods").select("id").eq("is_active", true).single(),
+  ]);
+  if (!role || !period) throw new Error("Butuh peran Anggota dan periode aktif");
+  await db.from("user_roles").insert({ user_id: data.user.id, role_id: role.id, period_id: period.id });
+  return data.user.id;
+}
+
+export async function removeMemberAccount() {
+  const db = adminClient();
+  const { data } = await db.auth.admin.listUsers({ page: 1, perPage: 200 });
+  const existing = data.users.find(user => user.email === MEMBER_EMAIL);
+  if (existing) await db.auth.admin.deleteUser(existing.id);
+}

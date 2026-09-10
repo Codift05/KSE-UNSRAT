@@ -8,8 +8,8 @@ import { loadProfile } from "@/backend/profile-data";
 export default async function ProgramsPage() {
   const profile = await loadProfile();
   if (!(await hasPermission("program.view"))) {
-    return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} content={<AccessNotice title="Semua program" description="Monitor progres, penanggung jawab, dan tenggat program." reason="Kamu memerlukan izin program.view. Hubungi Super Admin untuk mengatur role kamu." />} />;
+    return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} permissions={profile.permissions} content={<AccessNotice title="Semua program" description="Monitor progres, penanggung jawab, dan tenggat program." reason="Kamu memerlukan izin program.view. Hubungi Super Admin untuk mengatur role kamu." />} />;
   }
   const [data, canCreate, canUpdate, canDelete] = await Promise.all([loadPrograms(), hasPermission("program.create"), hasPermission("program.update"), hasPermission("program.delete")]);
-  return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} content={<ProgramsView {...data} canCreate={canCreate} canUpdate={canUpdate} canDelete={canDelete} />} />;
+  return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} permissions={profile.permissions} content={<ProgramsView {...data} canCreate={canCreate} canUpdate={canUpdate} canDelete={canDelete} />} />;
 }

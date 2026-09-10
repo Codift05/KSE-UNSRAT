@@ -8,8 +8,8 @@ import { loadProfile } from "@/backend/profile-data";
 export default async function MembersPage() {
   const profile = await loadProfile();
   if (!(await hasPermission("member.view"))) {
-    return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} content={<AccessNotice title="Anggota" description="Kelola data dan status seluruh anggota KSE Unsrat." reason="Kamu memerlukan izin member.view. Hubungi Super Admin untuk mengatur role kamu." />} />;
+    return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} permissions={profile.permissions} content={<AccessNotice title="Anggota" description="Kelola data dan status seluruh anggota KSE Unsrat." reason="Kamu memerlukan izin member.view. Hubungi Super Admin untuk mengatur role kamu." />} />;
   }
   const [data, canManage] = await Promise.all([loadMembers(), hasPermission("member.update")]);
-  return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} content={<MembersView {...data} canManage={canManage} />} />;
+  return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} permissions={profile.permissions} content={<MembersView {...data} canManage={canManage} />} />;
 }
