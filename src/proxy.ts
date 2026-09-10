@@ -5,7 +5,9 @@ export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    // Proxy hanya memvalidasi dan menyegarkan sesi; tidak ada alasan memberinya
+    // kunci yang melewati seluruh kebijakan keamanan basis data.
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll: () => request.cookies.getAll(),
