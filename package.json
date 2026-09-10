@@ -27,6 +27,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "supabase": "^2.117.0",
-    "typescript": "latest"
+    "typescript": "latest",
+    "vercel": "^59.15.1"
   }
 }
