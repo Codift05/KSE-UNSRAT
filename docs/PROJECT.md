@@ -28,7 +28,7 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Profil pengguna | Selesai | Menu akun dan edit data profil mandiri tersedia |
 | Manajemen akun | Implementasi siap | Super Admin dapat membuat, menonaktifkan, reset password, dan menghapus akun Supabase |
 | Database schema dan RLS | Diterapkan | Tujuh migration tercatat di `supabase_migrations.schema_migrations` lewat Supabase CLI |
-| Role dan permission | Implementasi siap | Matriks izin per role dan penetapan role per anggota di halaman Pengaturan, dengan penjagaan agar selalu tersisa satu pengelola sistem |
+| Role dan permission | Selesai | Tujuh role terisi izin awal lewat migration; matriks dan penetapan role per anggota dapat diubah di halaman Pengaturan, dengan penjagaan agar selalu tersisa satu pengelola sistem |
 | Periode | Implementasi siap | CRUD, aktivasi satu periode via `set_active_period`, arsip, dan hapus dengan penjagaan |
 | Anggota | Implementasi siap | Edit data, status anggota, dan penetapan divisi periode aktif; pembuatan anggota lewat halaman Akun |
 | Divisi | Implementasi siap | CRUD divisi periode aktif, koordinator, dan kelola anggota dari dua sisi |
@@ -221,6 +221,8 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-09 | Halaman `/privacy` dan `/terms` terbuka tanpa sesi | Pengguna perlu membacanya sebelum masuk, dan Google mengambilnya saat verifikasi OAuth consent screen |
 | 2026-09-10 | Klien sesi dan proxy memakai anon key, bukan service-role | Kueri lewat klien bersesi harus tetap tunduk pada RLS; melewatinya menjadi keputusan sadar yang hanya terjadi lewat `supabaseAdmin` |
 | 2026-09-10 | Alamat situs diturunkan dari permintaan bila `NEXT_PUBLIC_SITE_URL` kosong | Tautan reset password sebelumnya jatuh ke `localhost` secara diam-diam saat variabel itu lupa diisi |
+| 2026-09-10 | `system.manage` hanya dimiliki Super Admin | Izin itu dapat mengubah izin orang lain, sehingga memberikannya ke lebih dari satu jabatan membuka kemungkinan dua orang saling mencabut akses |
+| 2026-09-10 | Anggota tetap memperoleh empat izin baca, bukan nol | Dengan nol izin hampir seluruh halaman tertutup dan aplikasi terasa rusak bagi anggota, bukan terbatas |
 | 2026-09-09 | Google Drive memakai OAuth refresh token akun organisasi, bukan service account | Service account tidak punya kuota penyimpanan Drive sendiri sehingga hanya bekerja pada Shared Drive milik Workspace berbayar |
 | 2026-09-09 | Folder induk Drive dibuat oleh aplikasi, tidak boleh dibuat manual | Scope `drive.file` hanya memberi akses pada berkas yang dibuat aplikasi ini; folder buatan tangan akan ditolak dengan `File not found` meski jelas ada |
 | 2026-09-09 | Metadata gagal disimpan berarti berkas di Drive ikut dihapus | Mencegah arsip yatim yang tidak terlihat dari aplikasi mana pun |
