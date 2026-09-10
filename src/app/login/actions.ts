@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/backend/supabase/server";
+import { siteUrl } from "@/backend/site-url";
 
 export async function login(formData: FormData) {
   // Sebelumnya ada pemetaan alias nama pengguna ke email lewat variabel
@@ -32,7 +33,7 @@ export async function requestPasswordReset(formData: FormData) {
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback?next=/update-password`,
+    redirectTo: `${await siteUrl()}/auth/callback?next=/update-password`,
   });
 
   if (error) redirect("/forgot-password?error=Permintaan%20reset%20gagal");
