@@ -1,0 +1,181 @@
+@startuml kse-management-system
+' Use case KSE Management System - Paguyuban KSE Unsrat
+'
+' Disusun dari server action dan matriks role_permissions yang benar-benar ada
+' di kode, bukan dari rancangan di atas kertas. Hierarki aktor mengikuti matriks
+' izin sebenarnya: setiap peran mewarisi seluruh izin peran di bawahnya.
+
+skinparam linetype ortho
+skinparam shadowing false
+skinparam defaultFontName "Geist, Inter, Segoe UI, sans-serif"
+skinparam defaultFontSize 12
+skinparam backgroundColor #F5F7F6
+skinparam ArrowColor #8A948F
+skinparam ArrowFontColor #8A948F
+skinparam ArrowFontSize 10
+skinparam nodesep 14
+skinparam ranksep 44
+
+skinparam actor {
+  BorderColor #17211D
+  BackgroundColor #FFFFFF
+  FontColor #17211D
+  FontStyle bold
+}
+skinparam usecase {
+  BorderColor #C9D5CF
+  BackgroundColor #FFFFFF
+  FontColor #17211D
+  BorderThickness 1
+}
+skinparam rectangle {
+  BorderColor #DCE3DF
+  BackgroundColor #FFFFFF
+  FontColor #17211D
+  FontSize 12
+  FontStyle bold
+  roundCorner 0
+}
+skinparam package {
+  BorderColor #DCE3DF
+  BackgroundColor #FAFBFA
+  FontColor #176B4D
+  FontStyle bold
+  FontSize 11
+}
+skinparam note {
+  BorderColor #C9D5CF
+  BackgroundColor #FFFFFF
+  FontColor #68736E
+  FontSize 10
+}
+
+left to right direction
+
+' ─────────────────────────── Aktor ───────────────────────────
+actor "Anggota" as Anggota
+actor "Bendahara" as Bendahara
+actor "Koordinator\nDivisi" as Koordinator
+actor "Sekretaris" as Sekretaris
+actor "Pengurus Inti" as Inti
+actor "Super Admin" as Admin
+
+Anggota <|-- Bendahara
+Anggota <|-- Koordinator
+Bendahara <|-- Sekretaris
+Sekretaris <|-- Inti
+Koordinator <|-- Inti
+Inti <|-- Admin
+
+rectangle "KSE Management System" {
+
+  package "Akses" as P1 {
+    usecase "Masuk ke sistem" as UC_Login
+    usecase "Atur ulang kata sandi" as UC_Reset
+    usecase "Ubah profil sendiri" as UC_Profil
+  }
+
+  package "Organisasi" as P2 {
+    usecase "Lihat anggota\ndan struktur" as UC_LihatAnggota
+    usecase "Kelola data anggota" as UC_KelolaAnggota
+    usecase "Kelola divisi" as UC_Divisi
+    usecase "Kelola periode" as UC_Periode
+    usecase "Kelola jabatan\ndan pengurus" as UC_Pengurus
+  }
+
+  package "Program dan Tugas" as P3 {
+    usecase "Lihat program" as UC_LihatProgram
+    usecase "Buat program" as UC_BuatProgram
+    usecase "Ubah program\ndan agenda" as UC_UbahProgram
+    usecase "Hapus program" as UC_HapusProgram
+    usecase "Buat tugas" as UC_BuatTugas
+    usecase "Tugaskan dan\nubah status tugas" as UC_KelolaTugas
+    usecase "Perbarui tugas sendiri" as UC_TugasSendiri
+  }
+
+  package "Kehadiran dan Poin" as P4 {
+    usecase "Lihat rekap\ndan peringkat poin" as UC_LihatPoin
+    usecase "Catat kehadiran" as UC_CatatHadir
+    usecase "Buka sesi\nabsensi mandiri" as UC_SesiMandiri
+    usecase "Absen mandiri\ndengan lokasi" as UC_AbsenMandiri
+    usecase "Verifikasi\nabsensi mandiri" as UC_Verifikasi
+  }
+
+  package "Inventaris" as P5 {
+    usecase "Kelola barang" as UC_Barang
+    usecase "Ajukan peminjaman" as UC_Pinjam
+    usecase "Setujui dan proses\npeminjaman" as UC_Setujui
+  }
+
+  package "Dokumen" as P6 {
+    usecase "Unggah dokumen" as UC_Unggah
+    usecase "Hapus dokumen" as UC_HapusDok
+  }
+
+  package "Sistem" as P7 {
+    usecase "Kelola akun beswan" as UC_Akun
+    usecase "Atur role\ndan permission" as UC_Role
+    usecase "Lihat log aktivitas" as UC_Log
+  }
+}
+
+' ──────────────── Akses menurut peran ────────────────
+' Setiap aktor hanya digambar ke use case yang menjadi tambahan izinnya.
+Anggota --> UC_Login
+Anggota --> UC_Profil
+Anggota --> UC_LihatAnggota
+Anggota --> UC_LihatProgram
+Anggota --> UC_LihatPoin
+Anggota --> UC_Unggah
+Anggota --> UC_AbsenMandiri
+Anggota --> UC_Pinjam
+Anggota --> UC_TugasSendiri
+Anggota --> UC_Log
+
+Bendahara --> UC_Setujui
+
+Koordinator --> UC_BuatProgram
+Koordinator --> UC_UbahProgram
+Koordinator --> UC_BuatTugas
+Koordinator --> UC_KelolaTugas
+
+Sekretaris --> UC_KelolaAnggota
+Sekretaris --> UC_Divisi
+Sekretaris --> UC_Barang
+Sekretaris --> UC_HapusDok
+Sekretaris --> UC_CatatHadir
+Sekretaris --> UC_SesiMandiri
+Sekretaris --> UC_Verifikasi
+
+Inti --> UC_HapusProgram
+
+Admin --> UC_Akun
+Admin --> UC_Role
+Admin --> UC_Periode
+Admin --> UC_Pengurus
+
+UC_Reset .> UC_Login : <<extend>>
+
+note right of P7
+  **Dijalankan otomatis oleh basis data**
+  Perilaku berikut berasal dari trigger dan
+  fungsi Postgres, bukan dari tindakan pengguna:
+
+  • Poin kehadiran dihitung saat status dicatat
+     atau absensi mandiri diverifikasi
+  • Stok inventaris menyesuaikan saat barang
+     diserahkan dan dikembalikan
+  • Mengaktifkan periode menonaktifkan periode lain
+  • Progres program dihitung dari tugas selesai
+  • Folder arsip Drive dibuat saat dokumen diunggah
+  • Perubahan penting tercatat ke log aktivitas
+end note
+
+note bottom of P1
+  Autentikasi, basis data, dan penyimpanan berkas
+  ditangani layanan luar: **Supabase** untuk akun,
+  data, dan kebijakan akses; **Google Drive** untuk
+  arsip dokumen.
+end note
+
+@enduml
