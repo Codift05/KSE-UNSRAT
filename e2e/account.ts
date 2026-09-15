@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 // Akun khusus uji: dibuat sebelum test, dihapus sesudahnya. Memakai akun nyata
 // pengurus akan mengotori log aktivitas dan menuntut kata sandinya.
 export const TEST_EMAIL = "uji-e2e@kse-management.test";
+export const TEST_USERNAME = "ujie2e";
 export const TEST_PASSWORD = "UjiE2E!kse2026";
 export const TEST_NAME = "Akun Uji Otomatis";
 
@@ -32,7 +33,7 @@ export async function createTestAccount() {
     email: TEST_EMAIL, password: TEST_PASSWORD, email_confirm: true, user_metadata: { full_name: TEST_NAME },
   });
   if (error || !data.user) throw new Error(`Akun uji gagal dibuat: ${error?.message}`);
-  await db.from("profiles").update({ full_name: TEST_NAME, member_status: "active" }).eq("id", data.user.id);
+  await db.from("profiles").update({ full_name: TEST_NAME, username: TEST_USERNAME, member_status: "active" }).eq("id", data.user.id);
 
   // Diberi peran pengelola agar seluruh halaman terbuka; tanpa itu sebagian
   // besar halaman hanya menampilkan pemberitahuan izin dan tidak teruji.
@@ -48,6 +49,7 @@ export async function createTestAccount() {
 }
 
 export const MEMBER_EMAIL = "uji-anggota@kse-management.test";
+export const MEMBER_USERNAME = "ujianggota";
 export const MEMBER_PASSWORD = "UjiAnggota!kse2026";
 
 /** Akun beruang "Anggota" untuk membuktikan pembatasan per peran benar-benar
@@ -61,7 +63,7 @@ export async function createMemberAccount() {
     email: MEMBER_EMAIL, password: MEMBER_PASSWORD, email_confirm: true, user_metadata: { full_name: "Anggota Uji" },
   });
   if (error || !data.user) throw new Error(`Akun anggota uji gagal dibuat: ${error?.message}`);
-  await db.from("profiles").update({ full_name: "Anggota Uji", member_status: "active" }).eq("id", data.user.id);
+  await db.from("profiles").update({ full_name: "Anggota Uji", username: MEMBER_USERNAME, member_status: "active" }).eq("id", data.user.id);
 
   const [{ data: role }, { data: period }] = await Promise.all([
     db.from("roles").select("id").eq("name", "Anggota").single(),

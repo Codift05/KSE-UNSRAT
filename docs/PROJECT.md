@@ -225,6 +225,9 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-10 | `system.manage` hanya dimiliki Super Admin | Izin itu dapat mengubah izin orang lain, sehingga memberikannya ke lebih dari satu jabatan membuka kemungkinan dua orang saling mencabut akses |
 | 2026-09-15 | Saldo kas tidak pernah disimpan, selalu dihitung dari transaksi | Pada catatan lama saldo diketik manual, dan satu salah ketik pada 7 September 2025 membuat seluruh saldo setahun berikutnya meleset Rp410.000 tanpa disadari |
 | 2026-09-15 | Iuran dicatat per anggota, terpisah dari kas umum | Rp30,3 juta iuran pada catatan lama hanya berketerangan jumlah kepala, sehingga pertanyaan siapa yang belum membayar tidak dapat dijawab |
+| 2026-09-15 | Anggota masuk dengan username, bukan email | Email internal dibentuk dari nomor peserta KSE dan tidak pernah dilihat siapa pun, sehingga menuntut orang mengetiknya hanya menyulitkan tanpa menambah keamanan |
+| 2026-09-15 | Pemetaan username ke email berada di basis data, bukan di kode | Alias yang pernah ditulis tetap di kode menuntut perubahan kode setiap ada pengurus baru |
+| 2026-09-15 | Username asing dan kata sandi salah menghasilkan pesan yang sama | Pesan yang berbeda membuat halaman masuk dapat dipakai menebak siapa saja anggotanya |
 | 2026-09-15 | Nomor peserta KSE dan NIM disimpan pada kolom tersendiri, bukan catatan bebas | Keduanya dipakai mencocokkan orang saat rekonsiliasi dengan berkas dari pusat, jadi harus dapat dicari dan dijaga unik |
 | 2026-09-15 | Impor anggota menolak membuat nama yang menyerupai anggota lain kecuali dipaksa | Daftar resmi memakai nama panjang sedangkan pengurus mengetik nama pendek, sehingga satu orang sempat masuk dua kali |
 | 2026-09-15 | Target iuran disimpan pada periode, bukan ditulis tetap di kode | Besarannya berubah antar kepengurusan |

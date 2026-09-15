@@ -3,6 +3,7 @@
 import { revalidatePath, updateTag } from "next/cache";
 import { requirePermission } from "@/backend/authorization";
 import { supabaseAdmin } from "@/backend/supabase/admin";
+import { usernameValue } from "@/backend/member-profile";
 
 export type AccountActionState = { message?: string; error?: string };
 
@@ -13,18 +14,27 @@ export async function createAccount(_: AccountActionState, form: FormData): Prom
   try {
     const user = await requirePermission("system.manage");
     const fullName = name(form);
-    const address = email(form);
+    const username = usernameValue(String(form.get("username") || ""));
     const password = String(form.get("password") || "");
     if (fullName.length < 2 || fullName.length > 100) throw new Error("Nama harus 2–100 karakter");
-    if (!/^\S+@\S+\.\S+$/.test(address)) throw new Error("Email tidak valid");
     if (password.length < 8) throw new Error("Password awal minimal 8 karakter");
+
+    const { data: bentrok } = await supabaseAdmin.from("profiles").select("id").ilike("username", username).maybeSingle();
+    if (bentrok) throw new Error(`Username ${username} sudah dipakai anggota lain`);
+
+    // Email bersifat internal: Supabase Auth membutuhkannya, tetapi anggota
+    // tidak pernah melihatnya. Bila pengurus tidak mengisi alamat asli,
+    // alamat dibentuk dari username agar pembuatan akun tidak tersendat.
+    const diisi = email(form);
+    if (diisi && !/^\S+@\S+\.\S+$/.test(diisi)) throw new Error("Email tidak valid");
+    const address = diisi || `${username}@beswan.kseunsrat.web.id`;
     const { data, error } = await supabaseAdmin.auth.admin.createUser({ email: address, password, email_confirm: true, user_metadata: { full_name: fullName } });
     if (error || !data.user) throw new Error(error?.message || "Akun gagal dibuat");
-    const { error: profileError } = await supabaseAdmin.from("profiles").update({ full_name: fullName, member_status: "active" }).eq("id", data.user.id);
+    const { error: profileError } = await supabaseAdmin.from("profiles").update({ full_name: fullName, username, member_status: "active" }).eq("id", data.user.id);
     if (profileError) throw new Error(profileError.message);
     await supabaseAdmin.from("activity_logs").insert({ actor_id: user.id, action: "Membuat akun beswan", entity_type: "account", entity_id: data.user.id });
     updateTag("profiles"); updateTag("accounts"); revalidatePath("/accounts");
-    return { message: "Akun berhasil dibuat. Sampaikan email dan password awal kepada beswan." };
+    return { message: `Akun ${username} dibuat. Sampaikan username dan password awal kepada beswan.` };
   } catch (error) { return { error: error instanceof Error ? error.message : "Akun gagal dibuat" }; }
 }
 

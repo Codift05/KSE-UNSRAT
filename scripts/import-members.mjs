@@ -95,7 +95,7 @@ const daftar = rows.slice(1).map(r => ({
 console.log(`Dibaca ${daftar.length} baris dari ${csvPath}`);
 
 const [{ data: profiles }, { data: users }] = await Promise.all([
-  db.from("profiles").select("id,full_name,kse_id,student_id"),
+  db.from("profiles").select("id,full_name,username,kse_id,student_id"),
   db.auth.admin.listUsers({ page: 1, perPage: 1000 }),
 ]);
 const norm = s => (s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -146,6 +146,20 @@ if (!commit) {
 }
 
 const emailTerpakai = new Set((users?.users || []).map(u => (u.email || "").toLowerCase()));
+// Username dipakai untuk masuk, jadi harus unik. Dibentuk dari nama depan; bila
+// sudah terpakai, nama kedua disambungkan, lalu angka urut sebagai jalan akhir.
+const usernameTerpakai = new Set((profiles || []).map(p => (p.username || "").toLowerCase()).filter(Boolean));
+function buatUsername(nama) {
+  const kata = nama.toLowerCase().split(/\s+/).map(k => k.replace(/[^a-z0-9]/g, "")).filter(Boolean);
+  const dasar = (kata[0] || "anggota").slice(0, 20);
+  const kandidat = [dasar, kata[1] ? (dasar + kata[1]).slice(0, 20) : null].filter(Boolean);
+  for (const c of kandidat) if (c.length >= 3 && !usernameTerpakai.has(c)) { usernameTerpakai.add(c); return c; }
+  for (let i = 2; i < 100; i += 1) {
+    const c = `${dasar}${i}`.slice(0, 20);
+    if (!usernameTerpakai.has(c)) { usernameTerpakai.add(c); return c; }
+  }
+  throw new Error(`Tidak dapat membentuk username unik untuk ${nama}`);
+}
 const sandiBaru = [];
 let dibuat = 0, disegarkan = 0, gagal = 0;
 
@@ -165,12 +179,15 @@ for (const baris of dikerjakan) {
   };
 
   if (profilLama) {
+    // Username yang sudah ada tidak diubah: orang mungkin sudah memakainya masuk.
+    if (!profilLama.username) isiProfil.username = buatUsername(baris.nama);
     const { error } = await db.from("profiles").update(isiProfil).eq("id", profilLama.id);
     if (error) { console.error(`  GAGAL memperbarui ${baris.nama}: ${error.message}`); gagal += 1; }
     else disegarkan += 1;
     continue;
   }
 
+  isiProfil.username = buatUsername(baris.nama);
   const email = `${baris.kse_id || norm(baris.nama)}@${EMAIL_DOMAIN}`;
   if (emailTerpakai.has(email)) { console.error(`  LEWAT ${baris.nama}: email ${email} sudah dipakai`); gagal += 1; continue; }
   const sandi = `Kse${randomBytes(6).toString("base64url")}!`;
@@ -184,13 +201,13 @@ for (const baris of dikerjakan) {
   if (profilError) { console.error(`  GAGAL mengisi profil ${baris.nama}: ${profilError.message}`); gagal += 1; continue; }
 
   emailTerpakai.add(email);
-  sandiBaru.push({ nama: baris.nama, email, sandi });
+  sandiBaru.push({ nama: baris.nama, username: isiProfil.username, sandi });
   dibuat += 1;
 }
 
 if (sandiBaru.length) {
   const out = "akun-baru.csv";
-  writeFileSync(out, "nama,email,kata_sandi_awal\n" + sandiBaru.map(a => `"${a.nama}",${a.email},${a.sandi}`).join("\n") + "\n");
+  writeFileSync(out, "nama,username,kata_sandi_awal\n" + sandiBaru.map(a => `"${a.nama}",${a.username},${a.sandi}`).join("\n") + "\n");
   console.log(`\nKata sandi awal ${sandiBaru.length} akun ditulis ke ${out}. Bagikan lalu hapus berkasnya.`);
 }
 console.log(`\nSelesai: ${dibuat} akun dibuat, ${disegarkan} profil diperbarui, ${gagal} gagal.`);

@@ -1,11 +1,11 @@
 import { test as setup, expect } from "@playwright/test";
-import { createTestAccount, TEST_EMAIL, TEST_PASSWORD } from "./account.ts";
+import { createTestAccount, TEST_PASSWORD, TEST_USERNAME } from "./account.ts";
 
 setup("membuat akun uji dan menyimpan sesi login", async ({ page }) => {
   await createTestAccount();
 
   await page.goto("/login");
-  await page.getByLabel("Email").fill(TEST_EMAIL);
+  await page.getByLabel("Username").fill(TEST_USERNAME);
   await page.getByLabel("Password").fill(TEST_PASSWORD);
   await page.getByRole("button", { name: "Masuk" }).click();
 

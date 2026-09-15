@@ -7,6 +7,7 @@ import { memberStatusLabel } from "@/backend/attendance-status";
 export type MemberRow = {
   id: string;
   name: string;
+  username: string;
   email: string;
   phone: string;
   faculty: string;
@@ -27,7 +28,7 @@ const loadMemberRows = unstable_cache(async () => {
   const { data: period } = await supabaseAdmin.from("periods").select("id,name").eq("is_active", true).maybeSingle();
 
   const [{ data: profiles, error }, { data: divisions }, { data: assignments }, { data: users }] = await Promise.all([
-    supabaseAdmin.from("profiles").select("id,full_name,phone,faculty,study_program,cohort_year,kse_entry_year,member_status").order("full_name").limit(500),
+    supabaseAdmin.from("profiles").select("id,full_name,username,phone,faculty,study_program,cohort_year,kse_entry_year,member_status").order("full_name").limit(500),
     period ? supabaseAdmin.from("divisions").select("id,name").eq("period_id", period.id).order("name") : Promise.resolve({ data: [] as DivisionOption[] }),
     supabaseAdmin.from("division_members").select("division_id,member_id").limit(2000),
     supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 500 }),
@@ -51,6 +52,7 @@ const loadMemberRows = unstable_cache(async () => {
     return {
       id: profile.id,
       name: profile.full_name,
+      username: profile.username || "",
       email: emailById.get(profile.id) || "-",
       phone: text(profile.phone),
       faculty: text(profile.faculty),

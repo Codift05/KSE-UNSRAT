@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { memberName, memberStatusValue, memberYear, optionalText } from "./member-profile.ts";
+import { memberName, memberStatusValue, memberYear, optionalText, suggestUsername, usernameValue } from "./member-profile.ts";
 
 test("membersihkan nama anggota dan menolak panjang di luar batas", () => {
   assert.equal(memberName("  Fitra Maulana  "), "Fitra Maulana");
@@ -25,4 +25,22 @@ test("mengubah isian opsional kosong menjadi null", () => {
   assert.equal(optionalText("   "), null);
   assert.equal(optionalText(" Teknik Informatika "), "Teknik Informatika");
   assert.throws(() => optionalText("x".repeat(121)), /melebihi 120 karakter/);
+});
+
+test("username dijaga bentuknya karena dipakai untuk masuk", () => {
+  assert.equal(usernameValue("  Miftahuddin "), "miftahuddin");
+  assert.equal(usernameValue("nayla.safitri"), "nayla.safitri");
+  assert.throws(() => usernameValue(""), /wajib diisi/);
+  assert.throws(() => usernameValue("ab"), /3–20 karakter/);
+  assert.throws(() => usernameValue("1fitra"), /diawali huruf/);
+  assert.throws(() => usernameValue("fitra saragih"), /huruf kecil, angka, dan titik/);
+  assert.throws(() => usernameValue("fitra_saragih"), /huruf kecil, angka, dan titik/);
+});
+
+test("usulan username diambil dari nama depan", () => {
+  assert.equal(suggestUsername("EZRA APRIANI SINAGA"), "ezra");
+  assert.equal(suggestUsername("MOCH. ADJI WARDOYO"), "moch");
+  // Nama depan yang terlalu pendek tidak diusulkan; pengurus mengisinya sendiri.
+  assert.equal(suggestUsername("Li Wei"), "");
+  assert.equal(suggestUsername(""), "");
 });

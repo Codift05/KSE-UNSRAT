@@ -18,7 +18,7 @@ export function MembersView({ members, divisions, periodName, activeCount, alumn
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<Dialog | null>(null);
-  const filtered = useMemo(() => members.filter(member => `${member.name} ${member.email} ${member.studyProgram} ${member.divisionLabel}`.toLowerCase().includes(query.toLowerCase())), [members, query]);
+  const filtered = useMemo(() => members.filter(member => `${member.name} ${member.username} ${member.email} ${member.studyProgram} ${member.divisionLabel}`.toLowerCase().includes(query.toLowerCase())), [members, query]);
   const pageSize = 10;
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const rows = filtered.slice((page - 1) * pageSize, page * pageSize);
@@ -41,10 +41,11 @@ export function MembersView({ members, divisions, periodName, activeCount, alumn
         <label className="table-search"><MagnifyingGlass size={17} /><input value={query} onChange={event => { setQuery(event.target.value); setPage(1); }} placeholder="Cari anggota..." aria-label="Cari anggota" /></label>
       </div>
       <div className="document-table-wrap"><table className="document-table accounts-table">
-        <thead><tr><th>Nama</th><th>Email</th><th>Program studi</th><th>Angkatan</th><th>Divisi</th><th>Status</th>{canManage && <th>Kontrol</th>}</tr></thead>
+        <thead><tr><th>Nama</th><th>Username</th><th>Email</th><th>Program studi</th><th>Angkatan</th><th>Divisi</th><th>Status</th>{canManage && <th>Kontrol</th>}</tr></thead>
         <tbody>
           {rows.map(member => <tr key={member.id}>
             <td><strong>{member.name}</strong></td>
+            <td>{member.username || "-"}</td>
             <td>{member.email}</td>
             <td>{member.studyProgram || "-"}</td>
             <td>{member.cohortYear || "-"}</td>
@@ -55,7 +56,7 @@ export function MembersView({ members, divisions, periodName, activeCount, alumn
               <button type="button" onClick={() => setSelected({ member, action: "division" })} title="Atur divisi" aria-label={`Atur divisi ${member.name}`}><UsersThree size={16} /></button>
             </div></td>}
           </tr>)}
-          {!rows.length && <tr><td className="empty-table" colSpan={canManage ? 7 : 6}><div className="empty-state"><span><UsersThree size={21} /></span><div><strong>{query ? "Anggota tidak ditemukan" : "Belum ada anggota"}</strong><p>{query ? "Coba kata kunci lain." : "Anggota muncul otomatis setelah akunnya dibuat di halaman Akun."}</p></div></div></td></tr>}
+          {!rows.length && <tr><td className="empty-table" colSpan={canManage ? 8 : 7}><div className="empty-state"><span><UsersThree size={21} /></span><div><strong>{query ? "Anggota tidak ditemukan" : "Belum ada anggota"}</strong><p>{query ? "Coba kata kunci lain." : "Anggota muncul otomatis setelah akunnya dibuat di halaman Akun."}</p></div></div></td></tr>}
         </tbody>
       </table></div>
       {filtered.length > 0 && <Pagination page={page} totalPages={totalPages} totalItems={filtered.length} pageSize={pageSize} onPage={setPage} />}
@@ -76,6 +77,7 @@ function MemberDialog({ member, action, divisions, periodName, onClose }: { memb
         <input type="hidden" name="member_id" value={member.id} />
         {action === "edit" ? <>
           <label>Nama lengkap<input name="full_name" defaultValue={member.name} autoFocus required minLength={2} maxLength={100} /></label>
+          <label>Username<input name="username" defaultValue={member.username} required minLength={3} maxLength={20} /></label>
           <label>Nomor telepon<input name="phone" defaultValue={member.phone} maxLength={30} /></label>
           <label>Fakultas<input name="faculty" defaultValue={member.faculty} maxLength={120} /></label>
           <label>Program studi<input name="study_program" defaultValue={member.studyProgram} maxLength={120} /></label>

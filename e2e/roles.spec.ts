@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { createMemberAccount, MEMBER_EMAIL, MEMBER_PASSWORD, removeMemberAccount } from "./account.ts";
+import { createMemberAccount, MEMBER_PASSWORD, MEMBER_USERNAME, removeMemberAccount } from "./account.ts";
 
 // Membuktikan pembatasan peran benar-benar terasa oleh pengguna, bukan hanya
 // tercatat di database.
@@ -11,7 +11,7 @@ test.describe("pengalaman peran Anggota", () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto("/login");
-    await page.getByLabel("Email").fill(MEMBER_EMAIL);
+    await page.getByLabel("Username").fill(MEMBER_USERNAME);
     await page.getByLabel("Password").fill(MEMBER_PASSWORD);
     await page.getByRole("button", { name: "Masuk" }).click();
     await page.waitForURL("**/");

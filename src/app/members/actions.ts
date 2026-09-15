@@ -3,7 +3,7 @@
 import { revalidatePath, updateTag } from "next/cache";
 import { requirePermission } from "@/backend/authorization";
 import { supabaseAdmin } from "@/backend/supabase/admin";
-import { memberName, memberStatusValue, memberYear, optionalText } from "@/backend/member-profile";
+import { memberName, memberStatusValue, memberYear, optionalText, usernameValue } from "@/backend/member-profile";
 import { assignMemberToDivision, requireActivePeriod } from "@/backend/division-assignment";
 
 export type MemberActionState = { message?: string; error?: string };
@@ -21,8 +21,16 @@ export async function updateMember(_: MemberActionState, form: FormData): Promis
     const memberId = field(form, "member_id").trim();
     if (!memberId) throw new Error("Anggota tidak dikenali");
     const fullName = memberName(field(form, "full_name"));
+    const username = usernameValue(field(form, "username"));
+
+    // Username dipakai untuk masuk, jadi bentroknya harus ditolak dengan pesan
+    // yang jelas, bukan dibiarkan menjadi galat indeks unik dari Postgres.
+    const { data: bentrok } = await supabaseAdmin.from("profiles").select("id").ilike("username", username).neq("id", memberId).maybeSingle();
+    if (bentrok) throw new Error(`Username ${username} sudah dipakai anggota lain`);
+
     const { error } = await supabaseAdmin.from("profiles").update({
       full_name: fullName,
+      username,
       phone: optionalText(field(form, "phone"), 30),
       faculty: optionalText(field(form, "faculty")),
       study_program: optionalText(field(form, "study_program")),

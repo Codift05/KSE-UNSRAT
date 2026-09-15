@@ -27,3 +27,21 @@ export function optionalText(value: string, max = 120) {
   if (text.length > max) throw new Error(`Isian melebihi ${max} karakter`);
   return text || null;
 }
+
+/** Username dipakai untuk masuk, jadi bentuknya dijaga ketat: huruf kecil,
+ *  angka, dan titik saja. Spasi maupun huruf besar membuat orang salah ketik
+ *  berulang kali tanpa tahu sebabnya. */
+export function usernameValue(value: string) {
+  const username = value.trim().toLowerCase();
+  if (!username) throw new Error("Username wajib diisi");
+  if (username.length < 3 || username.length > 20) throw new Error("Username harus 3–20 karakter");
+  if (!/^[a-z][a-z0-9.]*$/.test(username)) throw new Error("Username diawali huruf dan hanya boleh berisi huruf kecil, angka, dan titik");
+  return username;
+}
+
+/** Dibentuk dari nama depan. Dipakai saat pengurus membuat akun agar tidak
+ *  perlu mengarang username sendiri. */
+export function suggestUsername(fullName: string) {
+  const dasar = (fullName || "").trim().toLowerCase().split(/\s+/)[0]?.replace(/[^a-z0-9]/g, "") || "";
+  return dasar.length >= 3 ? dasar.slice(0, 20) : "";
+}
