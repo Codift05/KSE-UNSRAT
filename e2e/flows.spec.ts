@@ -95,7 +95,10 @@ test("membuat divisi lalu menetapkannya ke anggota terlihat di halaman Anggota",
   await expect(page.getByRole("cell", { name: namaDivisi }).first()).toBeVisible();
 
   await page.goto("/members");
-  await page.getByRole("button", { name: /Atur divisi/ }).first().click();
+  // Disaring lebih dulu, bukan mengklik baris pertama: dengan lima puluh anggota
+  // baris pertama bukan lagi akun uji, dan uji ini akan menyunting orang lain.
+  await page.locator('input[aria-label="Cari anggota"]').fill(TEST_NAME);
+  await page.getByRole("button", { name: `Atur divisi ${TEST_NAME}` }).click();
   await page.locator('select[name="division_id"]').selectOption({ label: namaDivisi });
   await page.getByRole("button", { name: "Simpan divisi" }).click();
   await expect(page.getByText("Divisi anggota diperbarui.")).toBeVisible();
