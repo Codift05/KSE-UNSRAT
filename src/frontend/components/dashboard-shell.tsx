@@ -8,6 +8,7 @@ import {
   CheckCircle,
   Clock,
   Cube,
+  Coins,
   FileText,
   Gear,
   House,
@@ -32,7 +33,7 @@ const navGroups = [
   { label: "", items: [["Dashboard", "/", House, undefined]] },
   { label: "Organisasi", items: [["Anggota", "/members", Users, "member.view"], ["Kepengurusan", "/management", SquaresFour, "member.view"], ["Divisi", "/divisions", Users, "member.view"], ["Periode", "/periods", CalendarBlank, "member.view"]] },
   { label: "Program", items: [["Semua program", "/programs", ChartLineUp, "program.view"], ["Tugas saya", "/tasks", CheckCircle, undefined], ["Kalender", "/calendar", CalendarBlank, "member.view"]] },
-  { label: "Operasional", items: [["Kehadiran & poin", "/attendance", UserCheck, "attendance.view"], ["Inventaris", "/inventory", Cube, undefined], ["Dokumen", "/documents", FileText, undefined], ["Log aktivitas", "/activity", List, undefined]] },
+  { label: "Operasional", items: [["Kehadiran & poin", "/attendance", UserCheck, "attendance.view"], ["Keuangan", "/finance", Coins, "finance.view"], ["Inventaris", "/inventory", Cube, undefined], ["Dokumen", "/documents", FileText, undefined], ["Log aktivitas", "/activity", List, undefined]] },
   { label: "Sistem", items: [["Akun", "/accounts", User, "system.manage"], ["Pengaturan", "/settings", Gear, "system.manage"]] },
 ] as const;
 

@@ -17,3 +17,13 @@ export async function ensureDocumentFolder({ periodName, programName, categoryNa
     : await ensureFolder(administrationFolder, period);
   return categoryName ? ensureFolder(categoryName, branch) : branch;
 }
+
+// Bukti pembayaran keuangan diarsipkan terpisah dari dokumen program, mengikuti
+// cabang Finance pada PRD 8.17.
+export const financeFolder = "Finance";
+export const financeProofFolder = "Transactions";
+
+export async function ensureFinanceFolder(periodName: string) {
+  const period = await ensureFolder(periodName, driveRootFolderId());
+  return ensureFolder(financeProofFolder, await ensureFolder(financeFolder, period));
+}

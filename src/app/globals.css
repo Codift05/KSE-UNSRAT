@@ -721,6 +721,16 @@ a.primary-button:visited { color: #fff; }
 a.period-button:visited, .account-actions a:visited { color: var(--text); }
 .sidebar-legal a:visited { color: var(--muted); }
 
+/* Select pilihan ganda tumbuh menurut jumlah baris yang ditampilkan, jadi
+   tinggi tetap milik kontrol lain justru memotongnya. */
+.account-create select[multiple] {
+  background-image: none;
+  height: auto;
+  min-height: 0;
+  padding: 8px 10px;
+}
+.account-create select[multiple] option { padding: 4px 2px; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }

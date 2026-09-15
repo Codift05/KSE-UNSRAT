@@ -38,6 +38,7 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Program dan tugas | Implementasi siap | CRUD program dengan progress dari tugas selesai, dan CRUD tugas dengan penerima, prioritas, serta tenggat |
 | Google Drive | Terhubung | OAuth refresh token akun organisasi dengan scope `drive.file`; folder induk dibuat aplikasi, bukan manual |
 | Inventaris dan peminjaman | Implementasi siap | CRUD barang, alur pengajuan sampai pengembalian, dan stok tersedia yang dijaga trigger database |
+| Keuangan dan iuran | Implementasi siap | Buku kas dengan saldo terhitung, iuran per anggota, bukti pembayaran ke Drive |
 | Kehadiran dan rekap poin | Implementasi siap | Input, rekap, rincian beswan privat, riwayat, activity log, dan fallback schema tersedia |
 
 ## Urutan implementasi
@@ -222,6 +223,9 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-10 | Klien sesi dan proxy memakai anon key, bukan service-role | Kueri lewat klien bersesi harus tetap tunduk pada RLS; melewatinya menjadi keputusan sadar yang hanya terjadi lewat `supabaseAdmin` |
 | 2026-09-10 | Alamat situs diturunkan dari permintaan bila `NEXT_PUBLIC_SITE_URL` kosong | Tautan reset password sebelumnya jatuh ke `localhost` secara diam-diam saat variabel itu lupa diisi |
 | 2026-09-10 | `system.manage` hanya dimiliki Super Admin | Izin itu dapat mengubah izin orang lain, sehingga memberikannya ke lebih dari satu jabatan membuka kemungkinan dua orang saling mencabut akses |
+| 2026-09-15 | Saldo kas tidak pernah disimpan, selalu dihitung dari transaksi | Pada catatan lama saldo diketik manual, dan satu salah ketik pada 7 September 2025 membuat seluruh saldo setahun berikutnya meleset Rp410.000 tanpa disadari |
+| 2026-09-15 | Iuran dicatat per anggota, terpisah dari kas umum | Rp30,3 juta iuran pada catatan lama hanya berketerangan jumlah kepala, sehingga pertanyaan siapa yang belum membayar tidak dapat dijawab |
+| 2026-09-15 | Target iuran disimpan pada periode, bukan ditulis tetap di kode | Besarannya berubah antar kepengurusan |
 | 2026-09-10 | Anggota tetap memperoleh empat izin baca, bukan nol | Dengan nol izin hampir seluruh halaman tertutup dan aplikasi terasa rusak bagi anggota, bukan terbatas |
 | 2026-09-10 | Koordinator divisi otomatis tercatat sebagai anggota divisinya | Tanpa itu menunjuk koordinator menyisakan divisi berisi nol anggota sementara orangnya tetap terhitung belum berdivisi |
 | 2026-09-10 | Ketua dan Wakil Ketua digabung menjadi satu role `Pengurus Inti` | Keduanya menerima izin identik, dan role kembar cenderung menyimpang ketika salah satunya diubah tanpa yang lain; jabatan sebenarnya tetap tercatat pada Kepengurusan |
