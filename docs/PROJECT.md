@@ -22,6 +22,7 @@ Menyediakan satu aplikasi internal responsif untuk mengelola periode, anggota, s
 | Fondasi Next.js dan TypeScript | Selesai | Next.js App Router, build produksi lulus |
 | Shell dan navigasi responsif | Selesai | Desktop dan mobile sidebar |
 | Dashboard | Implementasi siap | Metrik, progress program dari tugas selesai, agenda, aktivitas terbaru, dan panel perhatian dibaca dari Supabase |
+| Landing page publik | Implementasi siap | Beranda publik PSKSE Unsrat berada di `/`; dashboard operasional tetap wajib login di `/dashboard`; visual publik memakai light theme yang sederhana dan ilustratif |
 | Dokumen | Implementasi siap | Unggah ke Drive, folder otomatis menurut periode/program/kategori, visibilitas, dan hapus yang ikut membersihkan berkas di Drive |
 | Supabase | Terhubung | Server SDK dan health endpoint tersedia |
 | Authentication | Selesai | Login, reset password, session refresh, proteksi terpusat, dan logout |
@@ -127,8 +128,9 @@ docs/                    PRD, status, dan keputusan implementasi
 - Satu accent color. Status bahaya dan peringatan hanya untuk makna semantik.
 - Radius utama `12px`; kontrol menggunakan `8px` sampai `9px`.
 - Font utama menggunakan Geist dari package lokal agar konsisten di development dan Vercel tanpa request font eksternal dari browser.
-- Halaman autentikasi memakai komposisi editorial: identitas dan konteks di kiri, form fokus di kanan, serta latar gelombang mint–biru es yang tetap memakai hijau KSE sebagai accent utama.
-- Latar autentikasi berada di `public/kse-auth-background.png`; logo transparan berada di `public/pskse-logo-transparent.png`. Aset latar tidak memuat teks atau logo sehingga copy tetap berupa HTML yang aksesibel dan responsif.
+- Landing publik memasangkan Geist untuk navigasi dan isi dengan Bodoni Moda yang di-host lokal untuk heading editorial; dashboard dan autentikasi tetap menggunakan Geist.
+- Halaman autentikasi memakai komposisi editorial: identitas dan konteks di kiri, form fokus di kanan, serta ilustrasi kampus yang sama dengan landing publik.
+- Latar autentikasi memakai `public/kse auth new background.webp` dengan overlay HTML; logo transparan berada di `public/pskse-logo-transparent.webp`. Copy tetap berupa HTML yang aksesibel dan responsif.
 - Navigasi antarrute memakai progress bar tipis global dari `nextjs-toploader`; halaman aktif tetap terlihat sampai rute berikutnya siap sehingga shell tidak berkedip atau berubah menjadi skeleton penuh.
 - Gunakan Phosphor Icons saja. Jangan membuat SVG icon manual.
 - Gunakan card hanya untuk grouping data yang nyata.
@@ -147,7 +149,8 @@ docs/                    PRD, status, dan keputusan implementasi
 
 | Route | Fungsi |
 | --- | --- |
-| `/` | Dashboard demo |
+| `/` | Landing page publik PSKSE Unsrat |
+| `/dashboard` | Dashboard internal, wajib login |
 | `/documents` | Monitoring dan pusat dokumentasi demo, wajib login |
 | `/login` | Login dengan Supabase Auth |
 | `/forgot-password` | Meminta tautan reset password |
@@ -228,6 +231,25 @@ Jangan commit `.env.local`. Service-role key yang pernah dibagikan melalui chat 
 | 2026-09-15 | Anggota masuk dengan username, bukan email | Email internal dibentuk dari nomor peserta KSE dan tidak pernah dilihat siapa pun, sehingga menuntut orang mengetiknya hanya menyulitkan tanpa menambah keamanan |
 | 2026-09-15 | Pemetaan username ke email berada di basis data, bukan di kode | Alias yang pernah ditulis tetap di kode menuntut perubahan kode setiap ada pengurus baru |
 | 2026-09-15 | Username asing dan kata sandi salah menghasilkan pesan yang sama | Pesan yang berbeda membuat halaman masuk dapat dipakai menebak siapa saja anggotanya |
+| 2026-09-20 | Beranda publik dipisahkan dari dashboard internal | Profil organisasi perlu dapat dibaca tanpa akun, sedangkan data dan operasi organisasi tetap berada pada route yang terlindungi |
+| 2026-09-20 | Landing publik selalu memakai light theme, dengan kuning sebagai CTA dan hijau hanya sebagai identitas pendukung | Menghindari halaman publik berubah menjadi portal hijau gelap saat sistem pengunjung memakai dark mode |
+| 2026-09-20 | Setiap ilustrasi landing publik dipakai satu kali | Memberi ritme visual yang jelas tanpa mengulang foto hero sebagai pengisi section |
+| 2026-09-20 | Aksi masuk landing publik cukup berada pada navigasi, hero, dan tautan portal anggota | CTA penutup yang besar dihapus agar halaman berakhir lebih tenang dan tidak terasa seperti template promosi |
+| 2026-09-20 | Landing publik memakai playful editorial minimalism dengan ilustrasi storybook sekali pakai dan neo-brutalist ringan hanya pada CTA | Menjaga halaman terasa khas, terang, dan artistik tanpa menjadi SaaS generik atau penuh ornamen |
+| 2026-09-20 | Hero publik memakai aset ilustrasi yang dipertajam dan berakhir dengan transisi sky-mint ke putih | Ilustrasi tetap menjadi fokus, sementara perpindahan ke konten editorial terasa lebih halus |
+| 2026-09-20 | Nilai publik disajikan sebagai daftar editorial tanpa kartu ilustrasi fantasy | Memperkuat karakter organisasi kampus yang matang dan menghindari visual game yang tidak perlu |
+| 2026-09-21 | Struktur publik memakai panel BPH lima peran dengan potret unik dan grid departemen informatif | Menyerupai struktur organisasi nyata tanpa mengulang ilustrasi atau menampilkan data personal yang belum disetujui |
+| 2026-09-20 | Section nilai memakai lanskap storybook sebagai latar dengan overlay sky yang terang dan tipografi lebih longgar | Menambah suasana tanpa mengulang foto utama, mengurangi kesan kaku, dan menjaga teks tetap mudah dibaca |
+| 2026-09-20 | Section Tentang memakai urutan perjalanan KSE, bukan foto pendamping | Hero tetap menjadi satu-satunya momen ilustratif besar; section berikutnya menjelaskan makna organisasi dengan struktur editorial yang lebih relevan |
+| 2026-09-20 | Skala landing mobile dibatasi agar headline hero maksimal 42px dan judul section 30px | Menjaga hierarki editorial tanpa membuat konten terasa membesar saat dibuka di ponsel |
+| 2026-09-21 | Login memakai ilustrasi hero landing, permukaan putih, dan tombol portal biru | Menjadikan perpindahan dari landing ke login terasa seperti satu pengalaman visual tanpa menurunkan keterbacaan form |
+| 2026-09-21 | Login memakai aset ilustrasi autentikasi yang sama dengan bagian nilai landing serta tautan kembali ke beranda | Membuat konteks visual publik konsisten dan memberi jalur pulang yang eksplisit dari form masuk |
+| 2026-09-21 | Aset raster publik disajikan dalam WebP; PNG asli dipertahankan sebagai arsip | Mengurangi ukuran transfer gambar tanpa mengubah komposisi atau menghilangkan sumber asli |
+| 2026-09-21 | Heading landing memakai Bodoni Moda lokal, sedangkan UI aplikasi tetap Geist | Memberi karakter editorial sesuai ilustrasi dan referensi visual tanpa mengurangi keterbacaan navigasi, form, dan tabel |
+| 2026-09-21 | Landing menampilkan struktur inti dengan tiga ilustrasi sekali pakai serta FAQ memakai elemen `details` bawaan browser | Memperluas informasi publik tanpa membuat galeri foto berulang atau menambah JavaScript untuk interaksi sederhana |
+| 2026-09-22 | Struktur publik menonjolkan satu peran utama dan empat peran pendamping; departemen disajikan sebagai daftar editorial | Menghilangkan kesan direktori kartu seragam, mempertahankan potret ilustratif tanpa mengklaim sebagai foto pengurus, dan membatasi aksen semi-brutal pada bingkai serta satu bayangan utama |
+| 2026-09-22 | Landing publik menampilkan nama lima BPH dan enam kepala departemen sesuai referensi `public/img refrensi/struktur.png`, masing-masing dengan karakter ilustratif unik | Permintaan eksplisit pengurus memperbarui keputusan sebelumnya untuk tidak menampilkan nama; ilustrasi diberi penjelasan bukan potret asli dan tidak mengubah struktur internal yang dikelola dinamis |
+| 2026-09-22 | Sebelas foto pengurus pada landing publik memakai satu avatar anonim WebP | Menyamakan tampilan tanpa menebak rupa pribadi; nama dan jabatan tetap terlihat serta avatar ditandai bukan foto asli |
 | 2026-09-15 | Nomor peserta KSE dan NIM disimpan pada kolom tersendiri, bukan catatan bebas | Keduanya dipakai mencocokkan orang saat rekonsiliasi dengan berkas dari pusat, jadi harus dapat dicari dan dijaga unik |
 | 2026-09-15 | Impor anggota menolak membuat nama yang menyerupai anggota lain kecuali dipaksa | Daftar resmi memakai nama panjang sedangkan pengurus mengetik nama pendek, sehingga satu orang sempat masuk dua kali |
 | 2026-09-15 | Target iuran disimpan pada periode, bukan ditulis tetap di kode | Besarannya berubah antar kepengurusan |

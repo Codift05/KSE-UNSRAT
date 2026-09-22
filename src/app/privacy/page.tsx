@@ -37,7 +37,7 @@ export default function PrivacyPage() {
       <h2>Kontak</h2>
       <p>Pertanyaan mengenai data pribadi dapat disampaikan kepada pengurus Paguyuban KSE Unsrat melalui Super Admin sistem.</p>
 
-      <p><Link href="/">Kembali ke dashboard</Link> · <Link href="/terms">Ketentuan penggunaan</Link></p>
+      <p><Link href="/">Kembali ke beranda</Link> · <Link href="/terms">Ketentuan penggunaan</Link></p>
     </main>
   );
 }

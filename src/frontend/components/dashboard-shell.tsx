@@ -30,7 +30,7 @@ import { logout } from "@/app/login/actions";
 import type { DashboardData } from "@/backend/dashboard-data";
 
 const navGroups = [
-  { label: "", items: [["Dashboard", "/", House, undefined]] },
+  { label: "", items: [["Dashboard", "/dashboard", House, undefined]] },
   { label: "Organisasi", items: [["Anggota", "/members", Users, "member.view"], ["Kepengurusan", "/management", SquaresFour, "member.view"], ["Divisi", "/divisions", Users, "member.view"], ["Periode", "/periods", CalendarBlank, "member.view"]] },
   { label: "Program", items: [["Semua program", "/programs", ChartLineUp, "program.view"], ["Tugas saya", "/tasks", CheckCircle, undefined], ["Kalender", "/calendar", CalendarBlank, "member.view"]] },
   { label: "Operasional", items: [["Kehadiran & poin", "/attendance", UserCheck, "attendance.view"], ["Keuangan", "/finance", Coins, "finance.view"], ["Inventaris", "/inventory", Cube, undefined], ["Dokumen", "/documents", FileText, undefined], ["Log aktivitas", "/activity", List, undefined]] },
@@ -53,7 +53,7 @@ export function DashboardShell({ accountName, accountRole, permissions = [], das
       {open && <button className="scrim" aria-label="Tutup menu" onClick={() => setOpen(false)} />}
       <aside className={`sidebar ${open ? "sidebar-open" : ""}`}>
         <div className="brand">
-          <div className="brand-logo"><Image src="/pskse-logo-transparent.png" alt="Sabua Paguyuban KSE Unsrat" width={388} height={216} priority /></div>
+          <div className="brand-logo"><Image src="/pskse-logo-transparent.webp" alt="Sabua Paguyuban KSE Unsrat" width={388} height={216} priority /></div>
           <button className="close-menu" aria-label="Tutup menu" onClick={() => setOpen(false)}><X size={20} /></button>
         </div>
         <nav aria-label="Navigasi utama">

@@ -1,8 +1,12 @@
-import { DashboardShell } from "@/frontend/components/dashboard-shell";
-import { loadDashboard } from "@/backend/dashboard-data";
-import { loadProfile } from "@/backend/profile-data";
+import type { Metadata } from "next";
+import { PublicLanding } from "@/frontend/components/public-landing";
 
-export default async function Home() {
-  const [dashboard, profile] = await Promise.all([loadDashboard(), loadProfile()]);
-  return <DashboardShell accountName={profile.fullName} accountRole={profile.roleLabel} permissions={profile.permissions} dashboard={dashboard} />;
+export const metadata: Metadata = {
+  title: "Paguyuban KSE Unsrat",
+  description: "Ruang bagi Beswan KSE Unsrat untuk berbagi, berkembang, dan membangun jejaring bersama.",
+  robots: { index: true, follow: true },
+};
+
+export default function Home() {
+  return <PublicLanding />;
 }

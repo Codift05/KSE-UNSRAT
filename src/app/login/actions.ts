@@ -34,7 +34,7 @@ export async function login(formData: FormData) {
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) redirect(GAGAL);
-  redirect("/");
+  redirect("/dashboard");
 }
 
 export async function logout() {
@@ -63,5 +63,5 @@ export async function updatePassword(formData: FormData) {
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.updateUser({ password });
   if (error) redirect("/update-password?error=Password%20gagal%20diperbarui");
-  redirect("/?password=updated");
+  redirect("/dashboard?password=updated");
 }

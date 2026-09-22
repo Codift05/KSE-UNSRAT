@@ -20,7 +20,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
         {error.digest && <p><code>{error.digest}</code></p>}
         <div className="notice-actions">
           <button className="primary-button" type="button" onClick={reset}>Coba lagi</button>
-          <Link className="period-button" href="/">Kembali ke dashboard</Link>
+          <Link className="period-button" href="/dashboard">Kembali ke dashboard</Link>
         </div>
       </section>
     </main>

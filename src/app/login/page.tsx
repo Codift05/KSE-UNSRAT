@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { login } from "./actions";
 import Link from "next/link";
+import { ArrowLeft } from "@phosphor-icons/react/dist/ssr";
 import { SubmitButton } from "@/frontend/components/submit-button";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
@@ -9,7 +10,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return <main className="login-page auth-page">
     <section className="auth-layout">
       <div className="auth-brand">
-        <div className="auth-logo"><Image src="/pskse-logo-transparent.png" alt="Sabua Paguyuban KSE Unsrat" width={388} height={216} priority /></div>
+        <Link className="auth-back" href="/"><ArrowLeft size={16} weight="bold" /> Kembali ke beranda</Link>
+        <div className="auth-logo"><Image src="/pskse-logo-transparent.webp" alt="Sabua Paguyuban KSE Unsrat" width={388} height={216} priority /></div>
         <div className="auth-brand-copy"><h1>Satu ruang untuk<br />gerak yang berdampak.</h1><span>Kelola anggota, program kerja, inventaris, dan arsip Paguyuban KSE Unsrat dalam satu sistem.</span></div>
         <small>Portal internal · Paguyuban KSE Unsrat</small>
       </div>

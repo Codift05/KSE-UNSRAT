@@ -28,7 +28,7 @@ export default function TermsPage() {
       <h2>Perubahan</h2>
       <p>Ketentuan ini dapat diperbarui seiring berkembangnya sistem. Perubahan penting akan disampaikan kepada pengurus.</p>
 
-      <p><Link href="/">Kembali ke dashboard</Link> · <Link href="/privacy">Kebijakan privasi</Link></p>
+      <p><Link href="/">Kembali ke beranda</Link> · <Link href="/privacy">Kebijakan privasi</Link></p>
     </main>
   );
 }

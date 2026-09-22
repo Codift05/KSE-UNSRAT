@@ -11,7 +11,7 @@ export default function NotFound() {
         <h1>Halaman tidak ditemukan</h1>
         <p>Alamat yang kamu buka tidak ada di sistem ini. Mungkin tautannya sudah berubah, atau halaman itu memang belum pernah ada.</p>
         <div className="notice-actions">
-          <Link className="primary-button" href="/">Kembali ke dashboard</Link>
+          <Link className="primary-button" href="/">Kembali ke beranda</Link>
         </div>
       </section>
     </main>

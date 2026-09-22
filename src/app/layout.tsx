@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     siteName: "KSE Management System",
     locale: "id_ID",
     type: "website",
-    images: [{ url: "/pskse-logo.png", width: 512, height: 512, alt: "Logo Paguyuban KSE Unsrat" }],
+    images: [{ url: "/pskse-logo.webp", width: 512, height: 512, alt: "Logo Paguyuban KSE Unsrat" }],
   },
   // Sistem internal organisasi, tidak untuk diindeks mesin pencari.
   robots: { index: false, follow: false },

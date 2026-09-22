@@ -24,7 +24,7 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   // Dokumen legal harus terbuka tanpa sesi: pengguna perlu membacanya sebelum
   // masuk, dan Google mengambilnya saat verifikasi OAuth consent screen.
-  const publicRoute = pathname === "/login" || pathname === "/forgot-password"
+  const publicRoute = pathname === "/" || pathname === "/login" || pathname === "/forgot-password"
     || pathname === "/privacy" || pathname === "/terms"
     || pathname.startsWith("/auth/") || pathname.startsWith("/api/health/");
 
@@ -33,7 +33,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (data?.claims && (pathname === "/login" || pathname === "/forgot-password")) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return response;
